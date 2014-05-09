@@ -2,6 +2,21 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
+\usepackage{amsfonts,amsmath}
+\usepackage{etoolbox}
+
+
+
+% macro for units.
+\def\UNIT#1#2{\ifstrempty{#2}{}{%
+\ifstrequal{#2}{1}{\mathrm{#1}}{\mathrm{#1}^{#2}}%
+}}
+\def\units#1#2#3{\ifstrempty{#1#2#3}{$[-]$}{$[ \UNIT{kg}{#1}\UNIT{m}{#2}\UNIT{s}{#3} ]$}} %with brackets
+\def\unitss#1#2#3{\ifstrempty{#1#2#3}{$-$}{$ \UNIT{kg}{#1}\UNIT{m}{#2}\UNIT{s}{#3} $}}    %without brackets
+
+%macro for hyperlinks (dummy)
+\def\hyperA#1#2{#2}
+
 
 \begin{document}
 
@@ -27,6 +42,11 @@
 
 
 \section{Vývoj za roky 2011--2014}
+
+\input transport_model
+
+\input heat
+
 
 
 

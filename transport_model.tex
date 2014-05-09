@@ -1,0 +1,131 @@
+% ***************************************** SYMBOLS
+\def\abs#1{\lvert#1\rvert}
+\def\argdot{{\hspace{0.18em}\cdot\hspace{0.18em}}}
+\def\avg#1{\left\{#1\right\}_\omega}
+\def\D{{\tn D}}
+\def\div{\operatorname{div}}
+\def\Eh{\mathcal E_h}       % edges of \Th
+\def\Ehcom{\mathcal E_{h,C}}         % edges of \Th on interface with lower dimension
+\def\Ehdir{\mathcal E_{h,D}}         % Dirichlet edges of \Th
+\def\Ehint{\mathcal E_{h,I}}       % interior edges of \Th
+\def\grad{\nabla}
+\def\jmp#1{[#1]}
+\def\n{\vc n}
+\def\vc#1{\mathbf{\boldsymbol{#1}}}     % vector
+\def\R{\mathbb R}
+\def\sc#1#2{\left(#1,#2\right)}
+\def\Th{\mathcal T_h}       % triangulation
+\def\th{\vartheta}
+\def\tn#1{{\mathbb{#1}}}    % tensor
+\def\Tr{\operatorname{Tr}}
+\def\where{\,|\,}
+%***************************************************************************
+
+
+\subsection{Advekčně-difúzní model transportu rozpuštěných látek}
+\label{sc:transport_model}
+
+Transport látky rozpuštěné v podzemní vodě lze popsat rovnicí advekce-difúze
+\begin{equation}
+    \label{e:ADE}
+   \partial_t ( \delta \th c^i) + \div ( \vc q c^i ) - \div (\th \delta \D^i \grad c^i ) = F_S^i + F^c_C(c^i), %+ F_R(c^1,\dots, c^s),
+\end{equation}
+kde $c^i$ \units{1}{-3}{} je koncentrace $i$-té látky, $i\in\{1,\dots, s\}$, tj. hmotnost látky na jednotku objemu vody.
+Další veličiny:
+\begin{itemize}
+\item $\delta$ \units{}{3-d}{} je rozevření pukliny, tj. $\delta_3=1$, $\delta_2$ je tloušťka a $\delta_1$ průřez pukliny.
+\item $\th$ \units{}{}{} je porozita, tedy podíl volného objemu nasyceného vodou.
+\item $\vc q$ je vektorové pole makroskopické rychlosti proudění vody.
+\item Tenzor hydrodynamické disperze $\D^i$ \units{}{2}{-1} má tvar
+\begin{equation} 
+  \label{eqn:transport_disp}
+  \D^i =D_m^i \tau \tn I + \abs{\vc v}\left(\alpha_T^i \tn I + (\alpha_L^i - \alpha_T^i) \frac{\vc v \otimes \vc v}{\abs{\vc v}^2}\right),
+\end{equation}
+reprezentující (izotropní) molekulární difúzi a mechanickou disperzi v podélném, resp. příčném směru k proudění.
+Zde $D_m^i$ \units{}{2}{-1} je koeficient molekulární difúze of the $i$-té látky%
+% (obvyklá hodnota v čisté vodě je řádově $10^{-9}$), $\tau=\th^{1/3}$ je tortuozita (viz \cite{millington_quirk}), $\alpha_L^i$ \units{}{1}{} a $\alpha_T^i$ \units{}{1}{} je podélná, resp. příčná disperzivita
+.
+Model obecně předpokládá pro každou látku jiné disperzivity, nicméně v praxi je často uvažováno, že disperzivita je určena pouze vlastnostmi porézního média.
+Konečně $\vc v$ \units{}{1}{-1} je \emph{mikroskopická} rychlost vody daná vztahem $\vc q = \th\delta\vc v$.
+% The value of $D_m^i$ for specific substances can be found in literature (see e.g. \cite{cislerova_vogel}).
+% For instructions on how to determine $\alpha_L^i$, $\alpha_T^i$ we refer to \cite{marsily,domenico_schwartz}.
+
+\item $F_S^i$ \units{1}{-d}{-1} reprezentuje hustotu zdrojů látky ve formě
+\begin{equation}
+ F_S^i = \delta f^i_S + \delta(c_S^i-c^i)\sigma_S. \label{eqn:transport_sources}
+\end{equation}
+Zde $f_S^i$ \units{1}{-3}{-1} je hustota objemových zdrojů, $c_S^i$ \units{1}{-3}{} je referenční koncentrace a $\sigma_S^i$ \units{}{}{-1} je tok koncentrace.
+
+\item $F^c_C(c^i)$ \units{1}{-d}{-1} je hustota zdrojů koncentrace vzniklá výměnou látky mezi přilehlými oblastmi různých dimenzí, viz \eqref{e:FC} níže.
+
+% \item Reakční člen $F_R(\dots)$ \units{1}{-d}{-1} je podrobně popsán v sekci \ref{sec:reaction_term}.
+\end{itemize}
+
+
+
+\paragraph{Počáteční a okrajové podmínky.}
+Pro čas $t=0$ je předepsána počáteční podmínka
+$$ c^i(0,\vc x) = c^i_0(\vc x). $$
+Hranice $\partial\Omega_d$ je rozdělena na části $\Gamma_I\cup\Gamma_D\cup\Gamma_N\cup\Gamma_R$, které mohou být časově závislé.
+První segment $\Gamma_I$ je dále rozdělen na část vstupní a výstupní:
+\begin{align*}
+\Gamma_I^+(t) &= \{\vc x\in \partial\Omega_d\where \vc q(t,\vc x)\cdot\vc n(\vc x)<0\},\\
+\Gamma_I^-(t) &= \{\vc x\in \partial\Omega_d\where \vc q(t,\vc x)\cdot\vc n(\vc x)\ge 0\},
+\end{align*}
+kde $\vc n$ značí vektor vnější jednotkové normály k $\partial\Omega_d$.
+Jsou předepsány následující okrajové podmínky:
+\begin{align*}
+c^i &= c^i_D &&\mbox{ na }\Gamma_I^+\cup\Gamma_D, & \mbox{(Dirichlet)}\\
+-\th\delta\D^i\nabla c^i\cdot\vc n &= 0 &&\mbox{ na }\Gamma_I^-, & \mbox{(homogenní Neumann)}\\
+-\th\delta\D^i\nabla c^i\cdot\vc n &= f^i_N &&\mbox{ na }\Gamma_N, & \mbox{(nehomogenní Neumann)}\\
+-\th\delta\D^i\nabla c^i\cdot\vc n &= \sigma^i_R(c^i-c^i_D) &&\mbox{ na }\Gamma_R. &\mbox{(Robin/Newton)}
+\end{align*}
+
+
+
+
+
+
+\paragraph{Komunikace mezi dimenzemi.}
+Pro transport látek na kompatibilních rozhraních (tj. 3D-2D a 2D-1D, ale ne 3D-1D) byly odvozeny následující vztahy (viz sekci \ref{sc:ad_on_fractures}).
+Označíme-li $c_{d+1}$, $c_d$ koncentraci látky v oblasti $\Omega_{d+1}$, resp. $\Omega_d$, pak komunikace mezi $\Omega_{d+1}$ a $\Omega_d$ je dána hodnotou
+\begin{multline}
+  \label{e:inter_dim_flux}
+  q^c_{d+1,d} = \sigma^c_{d+1,d} \frac{\delta_{d+1}^2}{\delta_d}2\th_d\D_d:\n\otimes\n ( c_{d+1} - c_d)\\
+  + \begin{cases}q^l_{d+1,d} c_{d+1} & \mbox{ pokud }q^l_{d+1,d}\ge 0,\\q^l_{d+1,d} \frac{\th_d}{\th_{d+1}} c_d & \mbox{ jinak},\end{cases}
+\end{multline}
+kde
+\begin{itemize}
+\item $q^c_{d+1,d}$ \units{1}{-d}{-1} je hustota toku koncentrace z $\Omega_{d+1}$ do $\Omega_d$.
+\item $\sigma^c_{d+1,d}$ \units{}{}{} je parametr přestupu, určující komunikaci vyvolanou rozdílem koncentrací.
+Např. hodnota $\sigma^c=1$ odpovídá situaci, kdy disperze napříč puklinou $\Omega_d$ je stejná jako disperze v tečném směru, zatímco $\sigma^c=0$ znamená komunikaci pouze vlivem proudění vody.
+\item $q^l_{d+1,d}$ \units{}{3-d}{-1} je tok vody z $\Omega_{d+1}$ do $\Omega_d$, tj. $q^l_{d+1,d} = \vc q_{d+1}\cdot\n_{d+1}$.
+\end{itemize}
+Komunikace mezi dimenzemi je do modelu začleněna jako okrajová podmínka pro úplný tok na $\partial\Omega_{d+1}$:
+\begin{equation}
+\label{e:FC}
+-\th\delta\D\nabla c\cdot\vc n + q^w c = q^c
+\end{equation}
+a zdrojový člen v $\Omega_d$:
+\begin{equation}
+F^c_{C3} = 0,\quad
+F^c_{C2} = q^c_{32},\quad
+F^c_{C1} = q^c_{21}.
+\end{equation}
+
+
+
+\paragraph{Bilance hmoty.}
+Rovnice \eqref{e:ADE} splňuje bilanci hmoty ve formě
+$$ m^i(0) + \int_0^t s^i(\tau) \,d\tau - \int_0^t f^i(\tau) \,d\tau = m^i(t), $$
+kde
+$$ m^i(t) := \sum_{d=1}^3\int_{\Omega^d}(\delta\th c^i)(t,\vc x)\,d\vc x, $$
+$$ s^i(t) := \sum_{d=1}^3\int_{\Omega^d}F_S^i(t,\vc x)\,d\vc x, $$
+$$ f^i(t) := \sum_{d=1}^3\int_{\partial\Omega^d}\left(\vc q c^i - \th\delta\D^i\nabla c^i\right)(t,\vc x)\cdot\vc n \,d\vc x $$
+je celková hmotnost \units{1}{}{}, objemový zdroj \units{1}{}{-1} a hmotnostní tok \units{1}{}{-1} $i$-té látky v čase $t$.
+Tyto hodnoty jsou vyčísleny v každém výpočetním čase pro každou pojmenovanou oblast a zapsány do zvoleného textového souboru (včetně kontrolních součtů).
+
+
+
+
+
