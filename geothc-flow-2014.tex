@@ -5,24 +5,163 @@
 
 \begin{document}
 
-\title{Flow123d --- softwarový nástroj pro simulaci sdružených THC procesů v geosféře}
+\title{Závěrečná zpráva projektu GoeTHC}
 \maketitle
 
 
-\section{Stav před zahájením řešení projektu}
+\section{Flow123d}
+Program Flow123d je softwarový nástroj pro simulaci termálních, hydrologických 
+a chemických (THC) procesů v rozpukaném porézním prostředí. Podporovné 
+fyzikální modely zahrnují: Darcyovské proudění, transport látek, jejich reakce, 
+fyzikální a chemické interakce s horninou a vedení tepla. Program je schopen 
+popsat explicitně procesy v 3D médiu, 2D puklinách, a 1D preferenčních cestách a 
+komunikaci mezi těmito doménami různých dimenzí. Tento přístup umožňuje výpočty 
+v regionálním měřítku se zahrnutím vlivu jemných struktur s výrazně odlišnými 
+materiálovámi parametry, např. geologických zlomů. Zejména je vhodný pro  
+modelování transportních procesů v žulových masivech s komplexních geologickou 
+strukturou.  
 
 
+\subsection{Přehled vývoje v průběhu projektu}
 
-\section{Plánovaný rozvoj}
 
-\subsection{Fyzikální modely}
+\subsection{Počáteční stav}
+Prvotní verze programu vznikla v rámci dizertační práce 
+Otto Severýna okolo roku 2004. Program umožňoval výpočet stacionárního 
+Darcyovského proudění pomocí metody smíšených-hybridních konečných prvků 
+nultého řádu. Originalita nespočívala v komplexnosti řešené rovnice (jedná o 
+lineární eliptickou rovnici), ale v komplexnosti výpočetní oblasti. Program 
+umožňuje modelovat 3D kontinuum obsahující relativně tenké 2D pukliny a 1D 
+kanály pomocí 2D a 1D konečných prvků a řeší tak sdruženou úlohu jedné rovnice 
+proudění na výpočetních oblastech různé dimenze. Později byl program významně 
+rozšířen.
 
-\subsection{Numerické metody}
+Ke konci roku 2010 umožňoval software výpočet stacionárního proudění a 
+navazující výpočet transportu. 
 
-\subsection{Uživatelské rozhraní}
+Lineární systém algebraických rovnic vyplývající 
+ze smíšené-hybridní diskretizace problému proudění byl řešen paralelně pomocí 
+knihovny PETSc. Byla implementována paralelní redukce soustavy pomocí 
+Schurových doplňků a redukovaný systém s pozitivně definitní maticí byl řešen 
+metodou sdružených gradientů s možností široké škály předpodmiňovačů dostupných 
+přes rozhraní knihovny PETSc. Transportní rovnice (pouze konvekce bez difúze) 
+zahrnovala koncept duální porozity (mobilní a immobilní póry) a sorpci látky 
+do horniny. Bylo možno řešit transport více látek najednou. Transportní rovnice 
+byla řešena explicitní Eulerovou metodou a metodou konečných objemů s upwindem.  
+Výpočet jednoho časového kroku byl realizován paralelně pomocí maticového 
+násobení knihovny PETSc. 
 
-\subsection{Kvalita kódu}
+Vstupní data programu byla zadávána v několika 
+souborech s rozdílným formátem. Pro jejich přípravu bylo třeba použít 
+další podpůrné softwarové nástroje což značně komplikovalo jakoukoliv 
+jejich změnu. Výstup výsledných skalárních a vektorových 
+polí byl realizován pouze do formátu programu GMSH, který není podporován jiným 
+vizualizačním software. K dispozici byla elementární dokumentace vstupních 
+souborů. Software měl již vlastni SVN repozitář pro správu verzí a webové 
+stránky projektu. Bylo vytvořeno několik testů pro ověření základní 
+funkcionality. 
 
+
+\subsubsection{2011 -- verze 1.6.5}
+Byly rozpracovány třídy pro řešení rovnice konvekce-difúze pomocí nespojité 
+Galerkinovy metody s implicitní časovou diskretizací. Byl implementován model 
+pro rozpady a jednosložkové reakce. Byla vytvořena třída pro obecné sekvenciální 
+propojení rovnic (proudění ustálené i neustálené a transportu). Do modelu 
+transportu byly implementovány dva typy objemových zdrojů koncentrací 
+transportovaných veličin. Byla také přidána možnost zadávat časově závislé 
+okrajové podmínky transportu.
+Byla implementována numerická metoda „lumped mixed-hybrid“ pro neustálené 
+proudění, která, na rozdíl od klasické smíšené-hybridní metody, splňuje při 
+řešení evolučních úloh diskrétní princip maxima. Porušení principu maxima přitom 
+může vést na nefyzikální překmity a oscilace. Při iteračním řešení nelineárních 
+či sdružených úloh pak může vést k problémům s konvergencí.
+Byly testovány dvě metody propojení rovnic proudění na nekompatibilních 2D a 1D 
+sítích při spojitém tlaku. Pro obě byla ověřena konvergence k odvozenému 
+analytickému řešení.
+Použití metody BDDC bylo úspěšně testováno na úlohách stacionárního proudění na 
+sítích s prvky více dimenzí. Její hlavní výhodou je velmi dobrá škálovatelnost a 
+tedy možnost řešení velmi rozsáhlých úloh. Metoda se zdá výhodná i kvůli tomu, 
+že není nutná samostatná konstrukce Schurových doplňků ke zmenšení velikosti 
+systému, neboť proměnné eliminované při použití Schurových doplňků jsou 
+samostatně eliminovány na jednotlivých subdoménách.
+Bylo vytvořeno jednotné výstupní rozhraní pro výstup skalárních a vektorových 
+polí do formátu GMSH nebo formátů VTK. Nové rozhraní je nyní použito pro výstup 
+všech datových polí. Dále bylo navrženo a částečně implementováno vstupní 
+rozhraní a byla vytvořena podrobná specifikace nových vstupních souborů. 
+Byla rozšířena a zkvalitněna sada testovacích úloh a vytvořen sytém pro 
+automatické spouštění testů a porovnávání vůči referenčním výsledkům. Testovací 
+sada je automaticky spouštěna pro každou změnu zdrojových kódů a výsledky jsou 
+publikovány na webu projektu. 
+
+\subsubsection{2012 -- verze 1.7.0}
+Byla dokončena implementace modelu pro advekci a difúzi s zahrnutím 
+hydrodynamické disperze. Model používá nespojitou Galerkinovu metodu pro 
+diskretizaci v prostoru a implicitní Eulerovu metodu pro časovou integraci.  
+Pole koncentrací je diskretizováno pomocí po částech lineárních funkcí na 
+jednotlivých elementech (čtyřstěnech, trojúhelnících, či úsečkách), spojitost 
+řešení je vynucena penalizačním členem ve slabé formulaci řešené rovnice. Model 
+byl odladěn na několika testovacích úlohách, je podporováno parallelní 
+sestavování matic i a parallelní řešení soustav na jednotlivých časových 
+úrovních.
+Bylo optimalizováno a zjednodušeno uložení výpočetní sítě a nástroj ngh pro 
+hledání sousedností mezi dimenzemi byl začleněn přímo do Flow123d. Vyhledávání 
+kompatibliních sousedností probíhá přímo na načtené výpočetní síti což je 
+rychlejší a zmenšuje paměťové nároky. 
+Dále bylo dokončeno a aplikováno nové vstupní rozhraní. Veškeré vstupy programu 
+jsou nyní čteny přes toto rozhraní, které umožňuje automatické vytvoření 
+referenční dokumentace hlavního vstupního souboru ve formátu JSON.
+Byly navrhnuty a implementovány třídy pro zadávání časo-prostorových skalárních, 
+vektorových či tenzorových polí. Většinu parametrů v modelech lze nyní zadávat 
+jednotným způsobem. Pro parametr zadávaný pomocí „Field“ rozhraní, lze pro každý 
+region sítě předepsat prostorovou závislost pomocí jednoho ze šesti 
+elementárních funkcí. Elementární funkce FieldConstant poskytuje prostorově 
+konstantní hodnoty, FieldFormula umožňuje zadat funkci pomocí vzorce 
+obsahujícího parametry t,x,y,z, který je přeložen až při běhu programu, 
+FieldPython umožňuje výpočet hodnot pomocí programu v jazyce Python, 
+FieldElementwise slouží k zadání po částech konstantní diskrétní funkce na 
+stejné síti jaká se použije k diskretizaci rovnice jíž je funkce parametrem, a 
+konečně FieldInterpolated umožňuje interpolovat hodnotu z po částech konstantní 
+diskrétní funkce na jiné síti. 
+Poslední zmíněná elementární funkce umožňuje interpolace prostorových dat jedné 
+sítě na data okrajových podmínek na jiné síti. Pro efektivní vyhledávání 3D 
+elementů protínajících 2D a 1D prvky hranice byla implementována metoda  
+„Bounding interval hierarchy“. Též bylo nutné implementovat funkce pro výpočet 
+průniku s nalezenými 3D elementy.
+ Během roku 2012 bylo začleněno přes 500 sad změn. 
+\subsubsection{2013 -- verze 1.8.0}
+Verze 1.7.0 z předchozího roku přinesla dvě velké změny: nový model 
+advekce-difúze a nové vtupní rozhraní. Obě přinesly rozšíření možností 
+simulátoru, ale zároveň mohlo dojít ke zhoršení výkonu. V roce 2013 bylo 
+provedeno podrobné porovnání výsledků a výkonu oproti verzi 1.6.7 na reálných 
+úlohách, byly opraveny drobné chyby a vyřešeny podstatné výkonnostní problémy.  
+Nové funkcionality zahrnují zejména: začlenění paralelního řešiče BDDCML do 
+produkční verze, optimalizace a zobecnění modelu pro adsorpci, duální porozitu a 
+rozpady, model vedení tepla a přechod na verzovací systém git. V roce 2013 bylo 
+začleněno 540 sad změn.
+\subsubsection{2014}
+Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
+
+\section{Fyzikální modely}
+\subsection{Nestacionární proudění}
+\subsection{Model transportu tepla}
+\subsection{Zobecněný reakční člen}
+
+\section{Numerické metody}
+\subsection{Nespojitá Galerkinova metoda}
+\subsection{Transportní procesy na puklinách}
+\subsection{"hrudková" smíšená-hybridní metoda}
+\subsection{lineární řešič BDDCML}
+
+\section{Uživatelské rozhraní}
+\subsection{Vstupní sooubor s hierarchickým formátem}
+\subsection{Zadávání časoprostorových fyzikálních polí}
+\subsection{Systém chybových hlášení}
+\subsection{Výstupní rozhraní}
+
+\section{Kvalita kódu}
+\subsection{Správa verzí}
+\subsection{Systém testů}
+\subsection{Struktura programu}
 
 
 
