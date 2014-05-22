@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[11pt]{report}
 
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
@@ -8,6 +8,9 @@
 \usepackage{amsfonts,amsmath}
 \usepackage{etoolbox}
 \usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{titlesec}
+\setcounter{secnumdepth}{3}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -40,11 +43,14 @@ top=1.49in, bottom=1.49in]{geometry}
 %\LLCornerWallPaper{1}{bar}
 %\lipsum[1-3]
 
-\title{Závěrečná zpráva projektu GoeTHC}
+\title{Závěrečná zpráva projektu GeoTHC}
 \maketitle
+\chapter{A}
+\chapter{B}
+\chapter{C}
 
-
-\section{Flow123d}
+\pagebreak
+\section{Vývoj numerického software Flow123d}
 Program Flow123d je softwarový nástroj pro simulaci termálních, hydrologických 
 a chemických (THC) procesů v rozpukaném porézním prostředí. Podporovné 
 fyzikální modely zahrnují: Darcyovské proudění, transport látek, jejich reakce, 
@@ -56,11 +62,9 @@ materiálovámi parametry, např. geologických zlomů. Zejména je vhodný pro
 modelování transportních procesů v žulových masivech s komplexních geologickou 
 strukturou.  
 
-
 \subsection{Přehled vývoje v průběhu projektu}
 
-
-\subsection{Počáteční stav}
+\subsubsection{Počáteční stav}
 Prvotní verze programu vznikla v rámci dizertační práce 
 Otto Severýna okolo roku 2004. Program umožňoval výpočet stacionárního 
 Darcyovského proudění pomocí metody smíšených-hybridních konečných prvků 
@@ -176,10 +180,10 @@ začleněno 540 sad změn.
 \subsubsection{2014}
 Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 
-\section{Fyzikální modely}
-\subsection{Nestacionární proudění}
+\subsection{Fyzikální modely}
+\subsubsection{Nestacionární proudění}
 
-\subsection{Advekčně-difúzní model transportu rozpuštěných látek}
+\subsubsection{Advekčně-difúzní model transportu rozpuštěných látek}
 \label{sc:transport_model}
 \input transport_model
 
@@ -193,6 +197,70 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 \subsection{Transportní procesy na puklinách}
 \subsection{"hrudková" smíšená-hybridní metoda}
 \subsection{lineární řešič BDDCML}
+Podpora paralelního řešiče BDDCML
+Ve spolupráci s Jakubem Šístkem byly dokončeny práce na využití jeho paralelního 
+řešiče implementujícího víceúrovňovou metodu BDDC. Práce zahrnovaly jak úpravy 
+na straně Flow123d tak na straně knihovny. Aplikace metody BDDC na úlohy 
+proudění s kombinacemi prvků různé dimenze je originální. Náročné bylo zejména 
+zvládnutí velkých rozdílů ve vodivostech na rozhraních sub-struktur jednotlivých 
+procesorů. Velké rozdíly se mohou objevit, pokud je rozhraní mezi 2D a 3D 
+elementem. Pro zvládnutí této heterogenity ve vodivosti bylo navrženy a 
+otestovány tři metody vážení tlaků na rozhraních. Uvažujme bod X na rozhraní 
+sub-struktur hodnota tlaku v tomto bodě je rovna váženému průměru tlaků na 
+jednotlivých sub-strukturách,. Standardní volba vah není vhodná pro heterogenní 
+problémy. Pokud jsou materiálové parametry (v našem případě vodivost) výrazně 
+rozdílné na jednotlových sub-strukturách, používá se škálování: . To ovšem 
+předpokládá konstantní materiálové charakteristiky na jednotlivých 
+sub-strukturách v našem případě, kdeje dimenze a je tenzor hydraulické vodivosti 
+na elementu sub-struktury přiléhajícímu k X. Kombinace 2D a 3D elementů však 
+může vést na výrazné oscilace podél rozhraní, pokud se hodnoty výrazně mění 
+podél rozhraní. Proto jsme navrhli upravené škálování , kde používáme přímo 
+hodnoty z asemblované matice, je diagonální hodnota z matice komunikace mezi 
+dimenzemi. Ta je nenulová pouze v případě, že rozhraní odděluje elementy různé 
+dimenze. Hodnota je diagonální hodnota z lokální matice elementu přiléhajícímu k 
+rozhraní, chová se podobně jako , ale zahrnuje i vliv geometrie. Tabulka 2 
+demonstuje porovnání jednotlivých metod vážení, aritmetické vážení dává špatné 
+výsledky i pro malý počet procesorů a někdy naprosto selhává (N=128, 1024), 
+-škálování dává většinou uspokojivé výsledky, ale selhává ve stejných případech 
+jako aritmetické vážení. Je pravděpodobné, že jde o ty případy, kdy rozhraní 
+sub-struktur leží mezi dimenzemi. Toto dělení je prováděno softwarem METIS a 
+výskyt těchto patologických případů lze sice vhodným nastavením snížit, ale ne 
+zcela vyloučit a to zejména pro větší počet sub-struktur. Poslední navržené 
+škálování  však dobře funguje i s problemetickým rozdělením. To demonstruje 
+poslední sloupeček tabulky, kde
+počet iterací ani číslo podmíněnosti příliš neroste s počtem sub-struktur.
+
+\begin{table}[ptbh]
+\begin{center}
+\begin{tabular}
+[c]{|cc|ccc|cc|cc|cc|}\hline
+\multirow{2}{*}{$N$} & \multirow{2}{*}{$n/N$} &
+\multirow{2}{*}{$n_{\Gamma}$} & \multirow{2}{*}{$n_f$} &
+\multirow{2}{*}{$n_c$} & \multicolumn{2}{c|}{arithmetic avg.} &
+\multicolumn{2}{c|}{mod. $\rho$-scal.} & \multicolumn{2}{c|}{diagonal scal.}\\
+&  &  &  &  & its. & cond. & its. & cond. & its. & cond.\\\hline
+32 & 245k & 20k & 106 & 322 & 637 & 9811.7 & 110 & 1467.8 & 112 & 1514.1\\
+64 & 123k & 28k & 192 & 597 & 618 & 10254.1 & 62 & 115.1 & 63 & 117.7\\
+128 & 61k & 45k & 413 & 1293 & 2834 & 1.0e+11 & 206 & 401641.4 & 75 & 194.4\\
+256 & 31k & 72k & 902 & 2791 & 799 & 11172.9 & 117 & 512.9 & 119 & 526.7\\
+512 & 15k & 110k & 2009 & 6347 & 883 & 15449.6 & 136 & 1160.1 & 137 & 1143.4\\
+1024 & 8k & 155k & 4575 & 14725 & n/a & 2.5e+10 & 504 & 99023.6 & 173 &
+897.0\\\hline
+\end{tabular}
+\end{center}
+\caption{\label{tab:tunnel_averaging}
+Vliv druhu vážení na počet iterací a odhad podmíněnosti matice.
+Comparison of 
+different averaging techniques for the
+\emph{Bed\v{r}ichov tunnel} containing 2D and 3D elements, size of the global
+problem is $n$ = 7.8M unknowns.}
+\end{table}
+
+Ve druhé polovině roku 2013 byl řešič využívající knihovnu BDDCML začleněn do 
+hlavní produkční větve a součástí verze 1.8.0. S využitím knihovny BDDCML bylo 
+dosaženo velmi dobré silné škálovatelnosti při řešení velkých reálných úloh 
+(miliony elementů) při využití až tisíce výpočetních jader, viz Obrázek 2. 
+Výsledky byly shrnuty v článku \cite{SistekBDDC} zaslaného k recenzi. 
 
 \section{Uživatelské rozhraní}
 \subsection{Vstupní sooubor s hierarchickým formátem}
@@ -209,7 +277,13 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 
 \section{Vývoj za roky 2011--2014}
 
+\begin{thebibliography}{99}
 
+\bibitem{SistekBDDC}
+J. Šístek, J. Březina, B. Sousedík : BDDC for Mixed-Hybrid 
+Formulation of Flow in Porous Media with Combined Mesh Dimensions, Numer. Linear 
+Algebra Appl. (submitted)
+\end{thebibliography}
 
 
 
