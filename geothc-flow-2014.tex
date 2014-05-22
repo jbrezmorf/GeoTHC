@@ -2,6 +2,7 @@
 
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\rmdefault}{\sfdefault}
 
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
@@ -193,7 +194,8 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 \label{sc:transport_model}
 \input transport_model
 
-\subsection{Model šíření tepla}
+\subsubsection{Model šíření tepla}
+\label{sc:heat}
 \input heat
 
 \subsection{Zobecněný reakční člen}
@@ -328,7 +330,12 @@ parametrech.}
 
 \section{Numerické metody}
 \subsection{Nespojitá Galerkinova metoda}
+\input dg
+
 \subsection{Transportní procesy na puklinách}
+\label{sc:ad_on_fractures}
+\input derivation_fractures
+
 \subsection{"hrudková" smíšená-hybridní metoda}
 \subsection{lineární řešič BDDCML}
 Ve spolupráci s Jakubem Šístkem byly dokončeny práce na využití jeho 
@@ -437,6 +444,24 @@ speed-up (right) separately for set-up and PCG phases, and their sum (solve).}
 \section{Vývoj za roky 2011--2014}
 
 \begin{thebibliography}{99}
+
+\bibitem{ern2010guaranteed}
+A. Ern, A.F. Stephansen, M. Vohral{\'\i}k.
+Guaranteed and robust discontinuous Galerkin a posteriori error estimates for convection--diffusion--reaction problems,
+\emph{Journal of computational and applied mathematics}, 234(1):114--130, 2010.
+
+
+\bibitem{ern_stephansen_zunino}
+A. Ern, A.F. Stephansen, P. Zunino.
+A discontinuous {G}alerkin method with weighted averages for advection--diffusion equations with locally small and anisotropic diffusivity,
+\emph{IMA Journal of Numerical Analysis}, 29(2):235--256, 2009.
+
+
+\bibitem{martin_modeling_2005}
+V. Martin, J. Jaffr{\'e}, J.E. Roberts.
+Modeling Fractures and Barriers as Interfaces for Flow in Porous Media,
+\emph{{SIAM} Journal on Scientific Computing}, 26(5):1667--1691, 2005.
+
 
 \bibitem{SistekBDDC}
 J. Šístek, J. Březina, B. Sousedík : BDDC for Mixed-Hybrid 
