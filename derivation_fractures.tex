@@ -1,0 +1,129 @@
+\def\d{\mathrm{d}}
+\def\prtl{\partial}
+\def\Real{\mathbb R}
+
+
+Modely proudění, transportu a vedení tepla v oblastech s puklinami implementované v programu Flow123d lze rigorózně odvodit s využitím obecného postupu pro abstraktní advekčně-difuzní proces.
+Tento postup, inspirovaný článkem \cite{martin_modeling_2005}, prezentujeme v této sekci.
+Nechť oblasti
+\begin{align*}
+ \Omega_f &\subset [0,\delta] \times \Real^{d-1},\\
+ \Omega_1 &\subset (-\infty,0)\times \Real^{d-1},\\
+ \Omega_2 &\subset (\delta,\infty)\times \Real^{d-1},~d\in\{2,3\},
+\end{align*}
+reprezentují puklinu a obklopující kontinuum.
+Dále označme $\gamma_i$, $i=1,2$ stěny pukliny sdílené s $\Omega_1$, resp. $\Omega_2$,
+a normálový vektor $\vc n=\vc n_1=-\vc n_2:=(1,0,0)^\top$.
+Symboly $x$ a $\vc y$ budou značit normálovou a tečnou složku bodu v $\Omega_f$. 
+
+Uvažujme advekčně-difuzní proces
+\begin{align}
+  \label{eq:fr:continuity}
+  \prtl_t w_i + \div \vc j_i &= f_i&&  \text{v } \Omega_i,\ i=1,2,f,\\
+  \label{eq:fr:flux}
+  \vc j_i &= - \tn A_i\grad u_i + \vc b_i w_i&& \text{v } \Omega_i,\ i=1,2,f,\\
+  \label{eq:fr:Dirichlet}
+  u_i &= u_f&& \text{na } \gamma_i,\ i=1,2,\\
+  \label{eq:fr:Neumann}
+  \vc j_i \cdot \vc n &= \vc j_f \cdot \vc n&& \text{na } \gamma_i,\ i=1,2,
+\end{align}
+kde $w_i=w_i(u_i)$ je zachovávaná veličina a $u_i$ je principiální neznámá, $\vc j_i$ je tok veličiny $w_i$, $f_i$ je zdrojový člen,
+$\tn A_i$ je difúzní tenzor a $\vc b_i$ je rychlostní pole.
+Předpokládáme, že tenzor $\tn A_f$ je symetrický pozitivně definitní 
+s vlastním vektorem rovnoběžným s $\vc n$.
+Díky tomu lze tento tenzor napsat ve formě
+\[
+ A_f = \begin{pmatrix} 
+            a_n & 0  \\
+            0 & \tn A_t
+       \end{pmatrix}.
+\]
+Dále předpokládáme, že $\tn A_f(x, \vc y)=\tn A_f(\vc y)$ je konstantní v příčném směru.
+
+Cílem je vyintegrovat rovnice v puklině $\Omega_f$ v příčném směru, abychom obdrželi jejich aproximace ve středu pukliny $\gamma=\Omega_f \cap \{x=\delta/2\}$. 
+Pro přehlednost nebudeme dále psát symbol $f$ u veličin, u nichž je zřejmé, že jsou definovány v puklině. 
+Pro matematickou korektnost předpokládáme, že funkce
+$\prtl_x w$, $\prtl_x \grad_{\vc y} u$, $\prtl_x \vc b_{\vc y}$ jsou spojité a omezené v $\Omega_f$. Zde a dále
+$\vc b_x=(\vc b \cdot \vc n)\, \vc n$ je příčná složka rychlostního pole a $\vc b_{\vc y} = \vc b - \vc b_x$ je tečná složka.
+% Stejné značení bude použito pro příčnou a tečnou složku pole $\vc q$.
+
+Integrací \eqref{eq:fr:continuity} přes rozevření pukliny $[0,\delta]$ a využitím aproximací dostaneme
+\begin{equation}
+    \label{eq:fracture_continuity}
+   \prtl_t (\delta W) - \vc j_2 \cdot \vc n_2 - \vc j_1 \cdot \vc n_1 + \div \vc J = \delta F,
+\end{equation}
+kde pro první člen je použita věta o střední hodnotě, Taylorův rozvoj 1. řádu 
+a omezenost $\prtl_x w$, což dává:
+\[
+    \int_0^\delta w(x,\vc y) \d x=\delta w(\xi_{\vc y}, \vc y) = \delta W(\vc y) + O(\delta^2\abs{\prtl_x w}),
+\]
+kde
+\[
+    W(\vc y)=w(\delta / 2,\vc y)=w(u(\delta/2,\vc y))=w(U(\vc y)).
+\]
+Další dva členy v \eqref{eq:fracture_continuity} pocházejí z (přesné) integrace divergence příčného toku $\vc j_x$.
+Integrováním divergence tečného toku $\vc j_{\vc y}$ získáme čtvrtý člen, kde je použito značení
+\[
+\vc J(\vc y) = \int_0^\delta \vc j_{\vc y}(x, \vc y) \d x.
+\]
+V případě $d=2$ je tento tok na $\gamma$ skalární veličina. Konečně zintegrujeme pravou stranu, což dává
+\[
+    \int_0^\delta f(x,\vc y) \d x = \delta F(\vc y) + O(\delta^2\abs{\prtl_x f}),\quad F(\vc y)=f(\delta/2,\vc y). 
+\]
+
+
+Díky speciálnímu tvaru tenzoru $\tn A_f$ můžeme odděleně integrovat tečnou a příčnou složku difuzního toku \eqref{eq:fr:flux}. Integrováním tečné složky a použitím aproximací
+\[
+    \int_0^\delta  \grad_{\vc y} u(x, \vc y) \d x = \delta \grad_{\vc y} u (\xi_{\vc y}, \vc y) 
+    = \delta \grad_{\vc y} U( \vc y) + O\big( \delta^2 \abs{\prtl_x\grad_{\vc y} u} \big) 
+\]
+a
+\[
+ \int_0^\delta \big(\vc b_{\vc y} w\big)(x, \vc y) \d x 
+  = \delta \vc B(\vc y) W(\vc y) + O\big(\delta^2 \abs{\prtl_x(\vc b_{\vc y} w)} \big),
+\]
+kde
+\[
+  \vc B(\vc y) = \vc b_{\vc y}(\delta/2, \vc y),
+\]
+dostáváme
+\begin{equation}
+    \label{eq:fracture_darcy}
+   \vc J = -\tn A_t \delta \grad_{\vc y} U + \delta \vc B W + O\big(\delta^2(\abs{\prtl_x\grad_{\vc y} u}+\abs{\prtl_x(\vc b_{\vc y} w)})\big).
+\end{equation}
+
+
+Zatím jsme odvodili rovnice pro stavové veličiny $U$ a $\vc J$ na středu pukliny $\gamma$. Pro kompletnost úlohy je nutné předepsat dvě přechodové podmínky na $\gamma_i$, $i=1,2$. Z tohoto důvodu provedeme integraci příčného toku $\vc j_x$, daného \eqref{eq:fr:flux}, odděleně pro levou a pravou polovinu pukliny.
+Podobně jako dříve použijeme aproximace
+\[
+ \int_0^{\delta/2} \vc j_x \d x = (\vc j_1 \cdot \vc n_1)\frac{\delta}{2} + O(\delta^2 \abs{\prtl_x \vc j_x})
+\]
+a
+\[
+ \int_0^{\delta/2} \vc b_x w \d x = (\vc b_1 \cdot \vc n_1)\tilde{w}_1\frac{\delta}{2} + O(\delta^2 \abs{\prtl_x \vc b_x}\abs{w} + \delta^2\abs{\vc b_x}\abs{\prtl_x w})
+\]
+a jejich analogie na intervalu $(\delta/2, \delta)$, čímž dostaneme
+\begin{align}
+    \label{eq:fracture_normal_1}
+     \vc j_1 \cdot \vc n_1 &= -\frac{2a_n}{\delta} (U - u_1) + \vc b_1\cdot \vc n_1 \tilde{w}_1\\
+    \label{eq:fracture_normal_2}
+    \vc j_2 \cdot \vc n_2 &= -\frac{2a_n}{\delta} (U - u_2) + \vc b_2\cdot \vc n_2 \tilde{w}_2
+\end{align}
+kde $\tilde w_i$ může být libovolná konvexní kombinace $w_i$ a $W$. Rovnice \eqref{eq:fracture_normal_1}  
+a \eqref{eq:fracture_normal_2} reprezentují semi-diskretizovaný tok z oblastí $\Omega_i$ do pukliny.
+Pro stabilitu výsledného numerického schématu zavedeme na této úrovni upwind s využitím různých konvexních
+kombinací pro každý směr proudění:
+\begin{align}
+   \notag 
+   \vc j_i \cdot \vc n_i
+       = &-\sigma_i (U - u_i)      \\ 
+   \notag
+      &+ \big[\vc b_i\cdot \vc n_i\big]^{+} \big(\xi w_i + (1-\xi) W\big)       \\
+      \label{eq:fracture_normal}
+      &+ \big[\vc b_i\cdot \vc n_i\big]^{-} \big((1-\xi) w_i + \xi W\big), \qquad i=1,2
+\end{align}
+kde $\sigma_i = \frac{2a_n}{\delta}$ je koeficient přestupu a parametr $\xi\in [\frac12, 1]$ může sloužit k interpolaci
+mezi upwindem ($\xi = 1$) a centrální diferencí ($\xi=\frac12$). Rovnice \eqref{eq:fracture_continuity}, \eqref{eq:fracture_darcy}, a
+\eqref{eq:fracture_normal} popisují obecnou formu advekčně-difúzního procesu v puklině a jeho komunikaci s 
+okolním kontinuem.
+
