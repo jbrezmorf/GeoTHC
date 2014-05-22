@@ -3,24 +3,24 @@ Za předpokladu teplotní rovnováhy mezi pevnou a kapalnou fází lze vyjádři
 \[
     \partial_t\left(\delta \tilde s T \right) + \div(\varrho_l c_l T \vc q) - \div(\delta\Lambda\nabla T) = F^T + F^T_C,
 \]
-kde $T$ [K] představuje neznámou teplotu.
+kde $T$ [$\mathrm{K}$] představuje neznámou teplotu.
 Další veličiny:
 \begin{itemize}
 \item \hyperA{HeatTransfer-DG-Data::fluid-density}{$\varrho_l$}, \hyperA{HeatTransfer-DG-Data::solid-density}{$\varrho_s$} \units{1}{-3}{} je hustota kapalné, resp. pevné fáze.
-\item \hyperA{HeatTransfer-DG-Data::fluid-heat-capacity}{$c_l$}, \hyperA{HeatTransfer-DG-Data::solid-heat-capacity}{$c_s$} [J$\mathrm{kg}^{-1}\mathrm{K}^{-1}$] je měrná tepelná kapacita kapalné, resp. pevné fáze.
-\item $\tilde s$ [J$\mathrm{m}^{-3}\mathrm{K}^{-1}$] je měrná objemová tepelná kapacita porézního média, definovaná jako
+\item \hyperA{HeatTransfer-DG-Data::fluid-heat-capacity}{$c_l$}, \hyperA{HeatTransfer-DG-Data::solid-heat-capacity}{$c_s$} [$\mathrm{J}\mathrm{kg}^{-1}\mathrm{K}^{-1}$] je měrná tepelná kapacita kapalné, resp. pevné fáze.
+\item $\tilde s$ [$\mathrm{Jm}^{-3}\mathrm{K}^{-1}$] je měrná objemová tepelná kapacita porézního média, definovaná jako
 \[ \tilde s = \hyperA{HeatTransfer-DG-Data::porosity}{\th}\varrho_l c_l + (1-\th)\varrho_s c_s. \]
-\item $\Lambda$ [W$\mathrm{m}^{-1}\mathrm{K}^{-1}$] je tenzor tepelné disperze:
+\item $\Lambda$ [$\mathrm{Wm}^{-1}\mathrm{K}^{-1}$] je tenzor tepelné disperze:
 \[ \Lambda = \Lambda^{cond} + \Lambda^{disp} \]
 \[ \Lambda^{cond} = \left(\th \lambda_l^{cond} + (1-\th)\lambda_s^{cond}\right)\tn I, \]
 \[ \Lambda^{disp} = \th \varrho_l c_l|\vc v|\left(\alpha_T\tn I + (\alpha_L-\alpha_T)\frac{\vc v\otimes\vc v}{|\vc v|^2}\right), \]
-kde \hyperA{HeatTransfer-DG-Data::fluid-heat-conductivity}{$\lambda_l^{cond}$}, \hyperA{HeatTransfer-DG-Data::solid-heat-conductivity}{$\lambda_s^{cond}$} [W$\mathrm{m}^{-1}\mathrm{K}^{-1}$] je koeficient tepelné vodivosti kapalné, resp. pevné fáze, a \hyperA{HeatTransfer-DG-Data::disp-l}{$\alpha_L$}, \hyperA{HeatTransfer-DG-Data::disp-t}{$\alpha_T$} \units{}{1}{} je podélná, resp. příčná disperzivita v kapalině.
+kde \hyperA{HeatTransfer-DG-Data::fluid-heat-conductivity}{$\lambda_l^{cond}$}, \hyperA{HeatTransfer-DG-Data::solid-heat-conductivity}{$\lambda_s^{cond}$} [$\mathrm{Wm}^{-1}\mathrm{K}^{-1}$] je koeficient tepelné vodivosti kapalné, resp. pevné fáze, a \hyperA{HeatTransfer-DG-Data::disp-l}{$\alpha_L$}, \hyperA{HeatTransfer-DG-Data::disp-t}{$\alpha_T$} \units{}{1}{} je podélná, resp. příčná disperzivita v kapalině.
 
-\item $F^T$ [J$\mathrm{m}^{-d}\mathrm{s}^{-1}$] reprezentuje tepelné zdroje:
+\item $F^T$ [$\mathrm{Jm}^{-d}\mathrm{s}^{-1}$] reprezentuje tepelné zdroje:
 \[ F^T = \delta \th F^T_l + \delta (1-\th) F^T_s, \]
 \[ F^T_l = f_l^T + \varrho_l c_l \sigma^T_l(T-T_l), \]
 \[ F^T_s = f_s^T + \varrho_s c_s \sigma^T_s(T-T_s), \]
-kde \hyperA{HeatTransfer-DG-Data::fluid-thermal-source}{$f_l^T$}, \hyperA{HeatTransfer-DG-Data::solid-thermal-source}{$f_s^T$} [W$\mathrm{m}^{-3}$] je hustota tepelných zdrojů, \hyperA{HeatTransfer-DG-Data::fluid-ref-temperature}{$T_l$}, \hyperA{HeatTransfer-DG-Data::solid-ref-temperature}{$T_s$} [K] je referenční teplota a \hyperA{HeatTransfer-DG-Data::fluid-heat-exchange-rate}{$\sigma^T_l$}, \hyperA{HeatTransfer-DG-Data::solid-heat-exchange-rate}{$\sigma^T_s$} \units{}{}{-1} je koeficient tepelné výměny v kapalné, resp. pevné fázi.
+kde \hyperA{HeatTransfer-DG-Data::fluid-thermal-source}{$f_l^T$}, \hyperA{HeatTransfer-DG-Data::solid-thermal-source}{$f_s^T$} [$\mathrm{Wm}^{-3}$] je hustota tepelných zdrojů, \hyperA{HeatTransfer-DG-Data::fluid-ref-temperature}{$T_l$}, \hyperA{HeatTransfer-DG-Data::solid-ref-temperature}{$T_s$} [$\mathrm{K}$] je referenční teplota a \hyperA{HeatTransfer-DG-Data::fluid-heat-exchange-rate}{$\sigma^T_l$}, \hyperA{HeatTransfer-DG-Data::solid-heat-exchange-rate}{$\sigma^T_s$} \units{}{}{-1} je koeficient tepelné výměny v kapalné, resp. pevné fázi.
 \end{itemize}
 
 
@@ -44,14 +44,14 @@ Je zde použito dělené hranice $\partial\Omega_d$ na $\Gamma_I\cup\Gamma_D\cup
 
 \paragraph{Komunikace mezi dimenzemi.}
 Označíme-li $T_{d+1}$, $T_d$ teplotu v $\Omega_{d+1}$, resp. v $\Omega_d$, pak komunikace mezi $\Omega_{d+1}$ a $\Omega_d$ je dána veličinou
-\begin{multline}
+\begin{equation}
   \label{e:inter_dim_flux_heat}
-  q^T_{d+1,d} = \sigma^T_{d+1,d} \frac{\delta_{d+1}^2}{\delta_d}2\Lambda_d:\n\otimes\n ( T_{d+1} - T_d)\\
+  q^T_{d+1,d} = \sigma^T_{d+1,d} \frac{\delta_{d+1}^2}{\delta_d}2\Lambda_d:\n\otimes\n ( T_{d+1} - T_d)
   + \begin{cases} \varrho_l c_l q^l_{d+1,d} T_{d+1} & \mbox{ pokud }q^l_{d+1,d}\ge 0,\\\varrho_l c_l q^l_{d+1,d} \frac{\tilde s_d}{\tilde s_{d+1}} T_d & \mbox{ jinak},\end{cases}
-\end{multline}
+\end{equation}
 kde
 \begin{itemize}
-\item $q^T_{d+1,d}$ [W$\mathrm{m}^{-2}$] je hustota tepelného toku z $\Omega_{d+1}$ do $\Omega_d$,
+\item $q^T_{d+1,d}$ [$\mathrm{Wm}^{-2}$] je hustota tepelného toku z $\Omega_{d+1}$ do $\Omega_d$,
 \item \hyperA{HeatTransfer-DG-Data::fracture-sigma}{$\sigma^T_{d+1,d}$} \units{}{}{} je parametr přestupu, ovlivňující komunikaci vlivem rozdílu teplot.
 Např. hodnota $\sigma^T=1$ odpovídá situaci, kdy tepelná disperze napříč puklinou je stejná jako v tečném směru, zatímco $\sigma^T=0$ znamená komunikaci pouze vlivem proudění vody.
 \item $q^l_{d+1,d}=\vc q_{d+1}\cdot\vc n$ je tok vody z $\Omega_{d+1}$ do $\Omega_d$.
@@ -78,7 +78,7 @@ kde
 $$ e(t) := \sum_{d=1}^3\int_{\Omega^d}(\delta \tilde s T)(t,\vc x)\,d\vc x, $$
 $$ s(t) := \sum_{d=1}^3\int_{\Omega^d}F_S^T(t,\vc x)\,d\vc x, $$
 $$ f(t) := \sum_{d=1}^3\int_{\partial\Omega^d}\left(\varrho_l c_l T\vc q - \delta\Lambda\nabla T\right)(t,\vc x)\cdot\vc n \,d\vc x $$
-je energie [J], objemový zdroj [J$\mathrm{s}^{-1}$] a tok energie [J$\mathrm{s}^{-1}$] v čase $t$.
+je energie [$\mathrm{J}$], objemový zdroj [$\mathrm{Js}^{-1}$] a tok energie [$\mathrm{Js}^{-1}$] v čase $t$.
 Tyto hodnoty jsou vyčísleny v každém výpočetním čase pro každou pojmenovanou oblast a zapsány do zvoleného textového souboru (včetně kontrolních součtů).
 
 

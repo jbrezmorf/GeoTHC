@@ -87,11 +87,11 @@ c^i &= c^i_D &&\mbox{ na }\Gamma_I^+\cup\Gamma_D, & \mbox{(Dirichlet)}\\
 \paragraph{Komunikace mezi dimenzemi.}
 Pro transport látek na kompatibilních rozhraních (tj. 3D-2D a 2D-1D, ale ne 3D-1D) byly odvozeny následující vztahy (viz sekci \ref{sc:ad_on_fractures}).
 Označíme-li $c_{d+1}$, $c_d$ koncentraci látky v oblasti $\Omega_{d+1}$, resp. $\Omega_d$, pak komunikace mezi $\Omega_{d+1}$ a $\Omega_d$ je dána hodnotou
-\begin{multline}
+\begin{equation}
   \label{e:inter_dim_flux}
-  q^c_{d+1,d} = \sigma^c_{d+1,d} \frac{\delta_{d+1}^2}{\delta_d}2\th_d\D_d:\n\otimes\n ( c_{d+1} - c_d)\\
+  q^c_{d+1,d} = \sigma^c_{d+1,d} \frac{\delta_{d+1}^2}{\delta_d}2\th_d\D_d:\n\otimes\n ( c_{d+1} - c_d)
   + \begin{cases}q^l_{d+1,d} c_{d+1} & \mbox{ pokud }q^l_{d+1,d}\ge 0,\\q^l_{d+1,d} \frac{\th_d}{\th_{d+1}} c_d & \mbox{ jinak},\end{cases}
-\end{multline}
+\end{equation}
 kde
 \begin{itemize}
 \item $q^c_{d+1,d}$ \units{1}{-d}{-1} je hustota toku koncentrace z $\Omega_{d+1}$ do $\Omega_d$.
