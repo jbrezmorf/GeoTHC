@@ -11,6 +11,9 @@
 \usepackage{multirow}
 \usepackage{titlesec}
 \setcounter{secnumdepth}{3}
+\usepackage[total={8.27in, 11.60in}, left=0.82in, right=0.82in,%
+top=1.49in, bottom=1.49in]{geometry}
+\usepackage{float}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -19,11 +22,12 @@
         \put(-60,0){\includegraphics{TACR_logo.png}}
     \end{picture}
     }
-\rhead{}
+\rhead{}    
+\cfoot{}
+\rfoot{\thepage}
 \renewcommand{\headrulewidth}{0pt}
 
-\usepackage[total={8.27in, 11.60in}, left=0.82in, right=0.82in,%
-top=1.49in, bottom=1.49in]{geometry}
+\usepackage{tikz}
 
 % macro for units.
 \def\UNIT#1#2{\ifstrempty{#2}{}{%
@@ -50,6 +54,7 @@ top=1.49in, bottom=1.49in]{geometry}
 \chapter{C}
 
 \pagebreak
+\setcounter{page}{10}
 \section{Vývoj numerického software Flow123d}
 Program Flow123d je softwarový nástroj pro simulaci termálních, hydrologických 
 a chemických (THC) procesů v rozpukaném porézním prostředí. Podporovné 
@@ -67,7 +72,8 @@ strukturou.
 \subsubsection{Počáteční stav}
 Prvotní verze programu vznikla v rámci dizertační práce 
 Otto Severýna okolo roku 2004. Program umožňoval výpočet stacionárního 
-Darcyovského proudění pomocí metody smíšených-hybridních konečných prvků 
+%\hyphenation{ko-neč-ných}
+Darcyovského proudění pomocí metody smíšených hybridních konečných prvků 
 nultého řádu. Originalita nespočívala v komplexnosti řešené rovnice (jedná o 
 lineární eliptickou rovnici), ale v komplexnosti výpočetní oblasti. Program 
 umožňuje modelovat 3D kontinuum obsahující relativně tenké 2D pukliny a 1D 
@@ -191,46 +197,176 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 \input heat
 
 \subsection{Zobecněný reakční člen}
+Verze 1.6.7 umožňovala zahrnutí rovnovážné sorpce a duální porozity v modelu 
+explicitního transportu. Ve verzi 1.7.0 byla tato funkcionalita zachována, ale 
+parametry obou modelů byly zadávány pomocí tříd pro časo-prostorová pole což 
+vedlo k dramatickému zpomalení. Byly implementovány třídy pro výpočet rozpadů a 
+jednoduchých reakcí, ale pouze v kapalné fázi, tj. bez uvažování sorpce či 
+duální porozity. Sorpce, duální porozita i jednoduché reakce byly implementovány 
+pouze na explicitní transport pomocí metody štěpení operátoru. 
+
+Ve verzi 1.8.0 je také použita metoda štěpení operátoru, ale je možné kombinovat 
+jednotlivé lokální modely. V jednom časovém kroku se nejprve spočítá transport 
+látky bez dalších vlivů a následně jsou v každém elementu spočteny
+modely reakčního členu: nerovnovýžná výměna s duálními póry, rozpady a 
+jednoduché reakce v primárních i duálních pórech v rozpuštěné i sorbované fázi a 
+nakonec je spočtena rovnovážná sorpce v primárních i duálních pórech. Tyto 
+modely je možno kombinovat jak je znázorněno na Obrázku 
+\ref{fig:reaction_term}. Uživatel tak může volit jak komplexní děje chce 
+reakčním členem popsat. Může to být pouhá reakce typu "Jaderný rozpad" nebo 
+komplexní schéma zahrnující duální porozitu, jiný druh sorpce pro mobilní a 
+imobilní póry a čtyři druhy reakcí v roztoku/hornině v mobilních/imobilních 
+pórech.
+
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.4]{./reaction_term.pdf}
+ % reaction_term.pdf: 842x595 pixel, 72dpi, 29.70x20.99 cm, bb=0 0 842 595
+ \caption{Struktura reakčního členu. Dělený box má v horní části fyzikální 
+kontext a v dolní části výčet modelů, které lze v daném kontextu použít.}
+ \label{fig:reaction_term}
+\end{figure}
+
+
+Technicky umožňujeme použití 
+metody štěpení operátoru pro explicitní i implicitní transport, nicméně v 
+případě implicitního tranportu je třeba volit dostatečně krátký časový krok.
+
+\subsubsection{Duální porozita}
+Model umožňuje popsat retenční vlastnosti slepých pórů a pulkin, které se 
+efektivně projevují při simulacích na velkém měřítku. Porézní médium je 
+rozděleno na mobilní póry, mobilní porozita $\theta_m$, a imobilní póry, 
+imobilní porozita $\theta_i$. Mezi těmito póry nedochází k proudění vody, ale 
+dochází k výměně látky difúzí. Tato nerovnovážná výměna je řízena jednoduchou 
+lineární soustavou obyčejných diferenciálních rovnic:
+\begin{align}
+    \vartheta_m \partial_t c_m &= D_{dp} ( c_i - c_m), 
+\label{eqn:dual_porosity_ode1}\\
+    \vartheta_i \partial_t c_i &= D_{dp} ( c_m - c_i), 
+\label{eqn:dual_porosity_ode2}
+\end{align}
+kde $c_m$ je koncentrace látky v mobilní zóně, $c_i$ je koncentrace látky v 
+imobilní zóně a $D_{dp}$ je koeficient difúze mezi zónami.
+
+
+\subsubsection{Sorpce}
+Implementace rovnovážných sorpcí byla kompletně předělána. Byla zachována 
+možnost zadávat všechny parametry pomocí časo-prostorových polí, nicméně pro 
+případ parametrů konstantních na jednotlivých regionech je implementován výpočet 
+pomocí předpočítaných interpolací, který umožňuje efektivní výpočet jak pro 
+lineární tak nelineární sorpční isotermy. Výpočet rovnovážné sorpce pro jednu 
+látku spočívá v řešení soustavy rovnic sestávající z bilance hmoty,
+\begin{equation}
+\label{eq:mass_balance_sorption}
+\th \varrho_l c_l + (1-\th) \varrho_s M_s c_s = c_T = const.
+\end{equation}
+a z empirického vztahu nazývaného sorpční izoterma:
+\[
+    c_s=f(c_l).
+\]
+V těchto rovnicích jsou neznámé hmotnosntí koncentrace látky v roztoku $c_l$ a 
+molární koncentrace látky v hornině $c_s$, další veličiny jsou hustota 
+rozpouštědla (vody) $\varrho_l$, hustota horniny $\varrho_s$, molární hmotnost 
+látky $M_s$ a celková koncentrace $c_T$. Výpočet probíhá tak, že po transportu 
+látky je porušena sorpční rovnováha, z rovnice \eqref{eq:mass_balance_sorption} 
+se vypočte celková koncentrace (celková hustota hmotnosti látky) a pak se 
+naleznou nové rovnovážné hodnoty $c_s$, $c_l$.
+
+Momentálně jsou implementovány lineární, Langmuierova a Freundlichova isoterma. 
+Obvykle jsou parametry rovnice závislé pouze na látce a regionu a pro 
+jednotlivé elementy jednoho regionu je třeba spočítat rovnovážné koncentrace pro 
+různé hodnoty celkové koncentrace $c_T$. V tom případě uvažujeme graf isotermy 
+v otočené soustavě (viz. Obr. 3).
+
+Hodnoty veličiny
+\[
+    Y=-\mu_s c_l + \mu_l c_s =  -M_s(1-\theta) \varrho_s c_l + \theta\rho_l 
+\]
+
+v závislosti na $c_T$ jsou tabelovány a mezihodnoty dopočítávány lineární 
+interpolací. Rovnovážné koncentrace pak dostaneme zpětným otočením:
+\[
+    c_l = \frac{\mu_l c_T + \mu_s Y}{\mu_s^2+\mu_l^2},\quad c_s = 
+\frac{-\mu_s c_T - \mu_l Y}{\mu_s^2 + \mu_l^2}.
+\]
+
+Tímto způsobem jsme schopni počítat i nelineární sorpce stejně efektivně jako 
+lineární. Tabulka \ref{tab:isoterm_timing} shrnuje výsledky benchmarkových 
+testů. Porovnáváme čas výpočtu sorpcí (v sekundách) pro tři různé isotermy a tři 
+různé verze kódu. V prvním sloupci jsou časy původní implementace z verze 1.6.7. 
+Ve druhém sloupci jsou výsledky pro implementaci využívající interpolace při 
+prostorově konstantních parametrech isoterm. Dosáhli jsme značného zrychlení pro 
+nelineární isotermy. Ve třetím sloupečku jsou časy při použití  plně prostorově 
+závislých parametrů, kde je nelineární rovnice řešena pro každý element, látku 
+a časový krok. Zde je ještě prostor pro optimalizace. Přibližně 11s trvá 
+výpočet prostorově závislých parametrů nicméně i po odečtení tohoto konstantního 
+faktoru jsou časy výrazně horší než pro verzi 1.6.7. Tuto variantu však 
+neplánujeme používat pro rozsáhlé oblasti a hoší výkon proto nepředstavuje 
+praktické omezení. Další optimalizace by bylo možné dosáhnout použitím Newtonovy 
+metody pro řešení nelineárních rovnic, jako tomu bylo ve verzi 1.6.7. Zde 
+používáme metodu pomalejší, ale stabilnější a umožňující snadné přidávání nových 
+isoterm.
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table}
+\begin{center}
+\begin{tabular}{|l||c|c|c|}
+\hline
+isoterma & verze 1.6.7 & v. 1.8.0 (interpolace) & v. 1.8.0 (přímý výpočet) \\
+\hline
+Lineární & 1.58        & 1.48                   & 28\\
+Langmuirova & 5.87     & 1.44                   & 36\\
+Freundlichova& 19.21   & 1.50                   & 44\\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{tab:isoterm_timing}
+Doba výpočtu sorpcí v sekundách pro různé isotermy a tři různé verze 
+kódu: původní, s použitím interpolací a při plně prostorově závislých 
+parametrech.}
+\end{table}
 
 \section{Numerické metody}
 \subsection{Nespojitá Galerkinova metoda}
 \subsection{Transportní procesy na puklinách}
 \subsection{"hrudková" smíšená-hybridní metoda}
 \subsection{lineární řešič BDDCML}
-Podpora paralelního řešiče BDDCML
-Ve spolupráci s Jakubem Šístkem byly dokončeny práce na využití jeho paralelního 
-řešiče implementujícího víceúrovňovou metodu BDDC. Práce zahrnovaly jak úpravy 
-na straně Flow123d tak na straně knihovny. Aplikace metody BDDC na úlohy 
-proudění s kombinacemi prvků různé dimenze je originální. Náročné bylo zejména 
-zvládnutí velkých rozdílů ve vodivostech na rozhraních sub-struktur jednotlivých 
-procesorů. Velké rozdíly se mohou objevit, pokud je rozhraní mezi 2D a 3D 
-elementem. Pro zvládnutí této heterogenity ve vodivosti bylo navrženy a 
-otestovány tři metody vážení tlaků na rozhraních. Uvažujme bod X na rozhraní 
-sub-struktur hodnota tlaku v tomto bodě je rovna váženému průměru tlaků na 
-jednotlivých sub-strukturách,. Standardní volba vah není vhodná pro heterogenní 
-problémy. Pokud jsou materiálové parametry (v našem případě vodivost) výrazně 
-rozdílné na jednotlových sub-strukturách, používá se škálování: . To ovšem 
-předpokládá konstantní materiálové charakteristiky na jednotlivých 
-sub-strukturách v našem případě, kdeje dimenze a je tenzor hydraulické vodivosti 
-na elementu sub-struktury přiléhajícímu k X. Kombinace 2D a 3D elementů však 
-může vést na výrazné oscilace podél rozhraní, pokud se hodnoty výrazně mění 
-podél rozhraní. Proto jsme navrhli upravené škálování , kde používáme přímo 
-hodnoty z asemblované matice, je diagonální hodnota z matice komunikace mezi 
-dimenzemi. Ta je nenulová pouze v případě, že rozhraní odděluje elementy různé 
-dimenze. Hodnota je diagonální hodnota z lokální matice elementu přiléhajícímu k 
-rozhraní, chová se podobně jako , ale zahrnuje i vliv geometrie. Tabulka 2 
-demonstuje porovnání jednotlivých metod vážení, aritmetické vážení dává špatné 
-výsledky i pro malý počet procesorů a někdy naprosto selhává (N=128, 1024), 
--škálování dává většinou uspokojivé výsledky, ale selhává ve stejných případech 
-jako aritmetické vážení. Je pravděpodobné, že jde o ty případy, kdy rozhraní 
-sub-struktur leží mezi dimenzemi. Toto dělení je prováděno softwarem METIS a 
-výskyt těchto patologických případů lze sice vhodným nastavením snížit, ale ne 
-zcela vyloučit a to zejména pro větší počet sub-struktur. Poslední navržené 
-škálování  však dobře funguje i s problemetickým rozdělením. To demonstruje 
-poslední sloupeček tabulky, kde
-počet iterací ani číslo podmíněnosti příliš neroste s počtem sub-struktur.
+Ve spolupráci s Jakubem Šístkem byly dokončeny práce na využití jeho 
+paralelního řešiče implementujícího víceúrovňovou metodu BDDC. Práce zahrnovaly 
+jak úpravy na straně Flow123d tak na straně knihovny. Aplikace metody BDDC na 
+úlohy proudění s kombinacemi prvků různé dimenze je originální. Náročné bylo 
+zejména zvládnutí velkých rozdílů ve vodivostech na rozhraních sub-struktur 
+jednotlivých procesorů. Velké rozdíly se mohou objevit, pokud je rozhraní mezi 
+prvky různé dimenze, kde můze docházet k velkým skokům vodivosti na hranici 
+rozhraní. Pro zvládnutí této heterogenity ve vodivosti bylo navrženy a 
+otestovány tři metody vážení tlaků na rozhraních. Uvažujme bod $X$ na rozhraní 
+sub-struktur $s=1,\dots,n$. Hodnota tlaku $p$ v tomto bodě je rovna váženému 
+průměru tlaků $p_s$ na jednotlivých sub-strukturách, 
+\[
+    p = \sum_{s=1}^n p_s. 
+\]
 
-\begin{table}[ptbh]
+Standardní volba vah $w_s=1/n$ (aritmetický průměr) není vhodná pro heterogenní 
+problémy. Pokud jsou materiálové parametry (v našem případě vodivost a 
+rozevření puklin) výrazně rozdílné na jednotlových sub-strukturách, používá se 
+škálování $\rho$-škálování:
+\[
+    w_s=\frac{\rho_s}{\sum_{s=1}^n \rho_s}.
+\]
+To ovšem předpokládá konstantní materiálové charakteristiky na jednotlivých 
+sub-strukturách v našem případě $\rho_s=\frac{\delta}{\text{tr}(\tn K^{-1})}$, 
+kde $\delta$ je efektivní pruřez pukliny a $\tn K$ je tenzor 
+hydraulické vodivosti na elementu sub-struktury přiléhající k $X$. Kombinace 2D 
+a 3D elementů však může vést na výrazné oscilace podél rozhraní, pokud se 
+hodnoty $\rho_s$ výrazně mění podél rozhraní. Proto jsme navrhli upravené 
+škálování $\rho_s=C^s_jj + \frac{1}{A^s_kk}$, kde používáme přímo hodnoty z 
+asemblované matice, $C^s_jj$ je diagonální hodnota z matice komunikace mezi 
+dimenzemi. Ta je nenulová pouze v případě, že rozhraní odděluje elementy různé 
+dimenze. Hodnota $A^s_kk$ je diagonální prvek z lokální matice elementu 
+přiléhajícímu k rozhraní, chová se podobně jako $\tn K^{-1}$, ale zahrnuje i 
+vliv geometrie. 
+
+\begin{table}[H]
 \begin{center}
 \begin{tabular}
 [c]{|cc|ccc|cc|cc|cc|}\hline
@@ -250,17 +386,40 @@ počet iterací ani číslo podmíněnosti příliš neroste s počtem sub-struk
 \end{center}
 \caption{\label{tab:tunnel_averaging}
 Vliv druhu vážení na počet iterací a odhad podmíněnosti matice.
-Comparison of 
-different averaging techniques for the
-\emph{Bed\v{r}ichov tunnel} containing 2D and 3D elements, size of the global
-problem is $n$ = 7.8M unknowns.}
+\emph{tunel Bed\v{r}ichov}, 2D a 3D elementy, 7.8 miliónů neznámých}
 \end{table}
+
+
+Tabulka \ref{tab:tunnel_averaging} demonstuje porovnání 
+jednotlivých metod vážení, aritmetické vážení dává špatné výsledky i pro malý 
+počet procesorů a někdy naprosto selhává (N=128, 1024), $\rho$-škálování dává 
+většinou uspokojivé výsledky, ale selhává ve stejných případech jako aritmetické 
+vážení. Jde o ty případy, kdy rozhraní sub-struktur leží 
+mezi dimenzemi. Toto dělení je prováděno softwarem METIS a výskyt těchto 
+patologických případů lze sice vhodným nastavením snížit, ale ne zcela vyloučit 
+a to zejména pro větší počet sub-struktur. Poslední navržené škálování  však 
+dobře funguje i s problemetickým rozdělením. To demonstruje poslední sloupeček 
+tabulky, kde
+počet iterací ani číslo podmíněnosti příliš neroste s počtem sub-struktur.
+
 
 Ve druhé polovině roku 2013 byl řešič využívající knihovnu BDDCML začleněn do 
 hlavní produkční větve a součástí verze 1.8.0. S využitím knihovny BDDCML bylo 
 dosaženo velmi dobré silné škálovatelnosti při řešení velkých reálných úloh 
 (miliony elementů) při využití až tisíce výpočetních jader, viz Obrázek 2. 
-Výsledky byly shrnuty v článku \cite{SistekBDDC} zaslaného k recenzi. 
+Výsledky byly shrnuty v článku \cite{SistekBDDC} zaslaného k recenzi.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.48\textwidth]{timing_melechov_large} 
+\includegraphics[width=0.48\textwidth]{speedup_melechov_large}
+\end{center}
+\caption{\label{fig:timing_Melechov_large}
+Strong scaling test for the problem of the \emph{Melechov locality}
+containing 2D and 3D elements and 15M unknowns, computational time (left) and
+speed-up (right) separately for set-up and PCG phases, and their sum (solve).}
+\end{figure}
+
 
 \section{Uživatelské rozhraní}
 \subsection{Vstupní sooubor s hierarchickým formátem}
