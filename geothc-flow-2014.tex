@@ -11,12 +11,15 @@
 \usepackage{amsfonts,amsmath}
 \usepackage{etoolbox}
 \usepackage{graphicx}
+% \usepackage{hyperref}
 \usepackage{multirow}
 \usepackage{titlesec}
 \setcounter{secnumdepth}{3}
 \usepackage[total={8.27in, 11.60in}, left=0.82in, right=0.82in,%
 top=1.49in, bottom=1.49in]{geometry}
 \usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -43,6 +46,42 @@ top=1.49in, bottom=1.49in]{geometry}
 \def\hyperA#1#2{#2}
 
 
+
+% ***************************************** SYMBOLS
+\def\abs#1{\lvert#1\rvert}
+\def\argdot{{\hspace{0.18em}\cdot\hspace{0.18em}}}
+\def\avg#1{\left\{#1\right\}}
+\def\bb{\vc b}
+\def\d{\mathrm{d}}
+\def\D{{\tn D}}
+\def\div{\operatorname{div}}
+\def\Eh{\mathcal E_h}       % edges of \Th
+\def\Ehb{\mathcal E_{h,B}}  % edges of \Th on boundary
+\def\Ehcom{\mathcal E_{h,C}}         % edges of \Th on interface with lower dimension
+\def\Ehdir{\mathcal E_{h,D}}         % Dirichlet edges of \Th
+\def\Ehint{\mathcal E_{h,I}}       % interior edges of \Th
+\def\Ehneu{\mathcal E_{h,N}}         % Neumann or Robin edges of \Th
+\def\grad{\nabla}
+\def\jmp#1{[#1]}
+\def\n{\vc n}
+\def\nn{\vc n}
+\def\prtl{\partial}
+\def\R{\mathbb R}
+\def\Real{\mathbb R}
+\def\sc#1#2{\left(#1,#2\right)}
+\def\Th{\mathcal T_h}       % triangulation
+\def\th{\vartheta}
+\def\tn#1{{\mathbb{#1}}}    % tensor
+\def\Tr{\operatorname{Tr}}
+\def\vc#1{\mathbf{\boldsymbol{#1}}}     % vector
+\def\wavg#1{\avg{#1}_\omega}
+\def\where{\,|\,}
+%***************************************************************************
+
+
+
+
+
 \begin{document}
 
 
@@ -60,10 +99,10 @@ top=1.49in, bottom=1.49in]{geometry}
 \setcounter{page}{10}
 \section{Vývoj numerického software Flow123d}
 Program Flow123d je softwarový nástroj pro simulaci termálních, hydrologických 
-a chemických (THC) procesů v rozpukaném porézním prostředí. Podporovné 
+a chemických (THC) procesů v rozpukaném porézním prostředí. Podporované 
 fyzikální modely zahrnují: Darcyovské proudění, transport látek, jejich reakce, 
 fyzikální a chemické interakce s horninou a vedení tepla. Program je schopen 
-popsat explicitně procesy v 3D médiu, 2D puklinách, a 1D preferenčních cestách a 
+popsat explicitně procesy v 3D médiu, 2D puklinách a 1D preferenčních cestách a 
 komunikaci mezi těmito doménami různých dimenzí. Tento přístup umožňuje výpočty 
 v regionálním měřítku se zahrnutím vlivu jemných struktur s výrazně odlišnými 
 materiálovámi parametry, např. geologických zlomů. Zejména je vhodný pro  
@@ -75,9 +114,8 @@ strukturou.
 \subsubsection{Počáteční stav}
 Prvotní verze programu vznikla v rámci dizertační práce 
 Otto Severýna okolo roku 2004. Program umožňoval výpočet stacionárního 
-%\hyphenation{ko-neč-ných}
-Darcyovského proudění pomocí metody smíšených hybridních konečných prvků 
-nultého řádu. Originalita nespočívala v komplexnosti řešené rovnice (jedná o 
+Darcyovského proudění pomocí metody smíšených-hybridních ko\-neč\-ných prvků 
+nultého řádu. Originalita nespočívala v komplexnosti řešené rovnice (jedná se o 
 lineární eliptickou rovnici), ale v komplexnosti výpočetní oblasti. Program 
 umožňuje modelovat 3D kontinuum obsahující relativně tenké 2D pukliny a 1D 
 kanály pomocí 2D a 1D konečných prvků a řeší tak sdruženou úlohu jedné rovnice 
@@ -88,10 +126,10 @@ Ke konci roku 2010 umožňoval software výpočet stacionárního proudění a
 navazující výpočet transportu. 
 
 Lineární systém algebraických rovnic vyplývající 
-ze smíšené-hybridní diskretizace problému proudění byl řešen paralelně pomocí 
+ze smíšené-hybridní diskretizace problému prou\-dě\-ní byl řešen paralelně pomocí 
 knihovny PETSc. Byla implementována paralelní redukce soustavy pomocí 
 Schurových doplňků a redukovaný systém s pozitivně definitní maticí byl řešen 
-metodou sdružených gradientů s možností široké škály předpodmiňovačů dostupných 
+metodou sdru\-že\-ných gradientů s možností široké škály předpodmiňovačů dostupných 
 přes rozhraní knihovny PETSc. Transportní rovnice (pouze konvekce bez difúze) 
 zahrnovala koncept duální porozity (mobilní a immobilní póry) a sorpci látky 
 do horniny. Bylo možno řešit transport více látek najednou. Transportní rovnice 
@@ -100,19 +138,19 @@ Výpočet jednoho časového kroku byl realizován paralelně pomocí maticovéh
 násobení knihovny PETSc. 
 
 Vstupní data programu byla zadávána v několika 
-souborech s rozdílným formátem. Pro jejich přípravu bylo třeba použít 
+souborech s rozdílným formátem. Pro jejich pří\-pra\-vu bylo třeba použít 
 další podpůrné softwarové nástroje což značně komplikovalo jakoukoliv 
 jejich změnu. Výstup výsledných skalárních a vektorových 
 polí byl realizován pouze do formátu programu GMSH, který není podporován jiným 
 vizualizačním software. K dispozici byla elementární dokumentace vstupních 
-souborů. Software měl již vlastni SVN repozitář pro správu verzí a webové 
+souborů. Software měl již vlastní SVN repozitář pro správu verzí a webové 
 stránky projektu. Bylo vytvořeno několik testů pro ověření základní 
 funkcionality. 
 
 
 \subsubsection{2011 -- verze 1.6.5}
 Byly rozpracovány třídy pro řešení rovnice konvekce-difúze pomocí nespojité 
-Galerkinovy metody s implicitní časovou diskretizací. Byl implementován model 
+Galerkinovy metody s~implicitní časovou diskretizací. Byl implementován model 
 pro rozpady a jednosložkové reakce. Byla vytvořena třída pro obecné sekvenciální 
 propojení rovnic (proudění ustálené i neustálené a transportu). Do modelu 
 transportu byly implementovány dva typy objemových zdrojů koncentrací 
@@ -142,18 +180,18 @@ sada je automaticky spouštěna pro každou změnu zdrojových kódů a výsledk
 publikovány na webu projektu. 
 
 \subsubsection{2012 -- verze 1.7.0}
-Byla dokončena implementace modelu pro advekci a difúzi s zahrnutím 
+Byla dokončena implementace modelu pro advekci a difúzi se zahrnutím 
 hydrodynamické disperze. Model používá nespojitou Galerkinovu metodu pro 
 diskretizaci v prostoru a implicitní Eulerovu metodu pro časovou integraci.  
 Pole koncentrací je diskretizováno pomocí po částech lineárních funkcí na 
 jednotlivých elementech (čtyřstěnech, trojúhelnících, či úsečkách), spojitost 
 řešení je vynucena penalizačním členem ve slabé formulaci řešené rovnice. Model 
-byl odladěn na několika testovacích úlohách, je podporováno parallelní 
-sestavování matic i a parallelní řešení soustav na jednotlivých časových 
+byl odladěn na několika testovacích úlohách, je podporováno paralelní 
+sestavování matic a paralelní řešení soustav na jednotlivých časových 
 úrovních.
 Bylo optimalizováno a zjednodušeno uložení výpočetní sítě a nástroj ngh pro 
 hledání sousedností mezi dimenzemi byl začleněn přímo do Flow123d. Vyhledávání 
-kompatibliních sousedností probíhá přímo na načtené výpočetní síti což je 
+kompatibilních sousedností probíhá přímo na načtené výpočetní síti což je 
 rychlejší a zmenšuje paměťové nároky. 
 Dále bylo dokončeno a aplikováno nové vstupní rozhraní. Veškeré vstupy programu 
 jsou nyní čteny přes toto rozhraní, které umožňuje automatické vytvoření 
@@ -161,7 +199,7 @@ referenční dokumentace hlavního vstupního souboru ve formátu JSON.
 Byly navrhnuty a implementovány třídy pro zadávání časo-prostorových skalárních, 
 vektorových či tenzorových polí. Většinu parametrů v modelech lze nyní zadávat 
 jednotným způsobem. Pro parametr zadávaný pomocí „Field“ rozhraní, lze pro každý 
-region sítě předepsat prostorovou závislost pomocí jednoho ze šesti 
+region sítě předepsat prostorovou závislost pomocí jedné ze šesti 
 elementárních funkcí. Elementární funkce FieldConstant poskytuje prostorově 
 konstantní hodnoty, FieldFormula umožňuje zadat funkci pomocí vzorce 
 obsahujícího parametry t,x,y,z, který je přeložen až při běhu programu, 
@@ -178,7 +216,7 @@ průniku s nalezenými 3D elementy.
  Během roku 2012 bylo začleněno přes 500 sad změn. 
 \subsubsection{2013 -- verze 1.8.0}
 Verze 1.7.0 z předchozího roku přinesla dvě velké změny: nový model 
-advekce-difúze a nové vtupní rozhraní. Obě přinesly rozšíření možností 
+advekce-difúze a nové vstupní rozhraní. Obě přinesly rozšíření možností 
 simulátoru, ale zároveň mohlo dojít ke zhoršení výkonu. V roce 2013 bylo 
 provedeno podrobné porovnání výsledků a výkonu oproti verzi 1.6.7 na reálných 
 úlohách, byly opraveny drobné chyby a vyřešeny podstatné výkonnostní problémy.  
@@ -191,6 +229,8 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 
 \subsection{Fyzikální modely}
 \subsubsection{Nestacionární proudění}
+\label{sc:darcy_flow}
+\input darcy_flow
 
 \subsubsection{Advekčně-difúzní model transportu rozpuštěných látek}
 \label{sc:transport_model}
@@ -201,245 +241,155 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 \input heat
 
 \subsection{Zobecněný reakční člen}
-Verze 1.6.7 umožňovala zahrnutí rovnovážné sorpce a duální porozity v modelu 
-explicitního transportu. Ve verzi 1.7.0 byla tato funkcionalita zachována, ale 
-parametry obou modelů byly zadávány pomocí tříd pro časo-prostorová pole což 
-vedlo k dramatickému zpomalení. Byly implementovány třídy pro výpočet rozpadů a 
-jednoduchých reakcí, ale pouze v kapalné fázi, tj. bez uvažování sorpce či 
-duální porozity. Sorpce, duální porozita i jednoduché reakce byly implementovány 
-pouze na explicitní transport pomocí metody štěpení operátoru. 
-
-Ve verzi 1.8.0 je také použita metoda štěpení operátoru, ale je možné kombinovat 
-jednotlivé lokální modely. V jednom časovém kroku se nejprve spočítá transport 
-látky bez dalších vlivů a následně jsou v každém elementu spočteny
-modely reakčního členu: nerovnovážná výměna s duálními póry, rozpady a 
-jednoduché reakce v primárních i duálních pórech v rozpuštěné i sorbované fázi a 
-nakonec je spočtena rovnovážná sorpce v primárních i duálních pórech. Tyto 
-modely je možno kombinovat jak je znázorněno na Obrázku 
-\ref{fig:reaction_term}. Uživatel tak může volit jak komplexní děje chce 
-reakčním členem popsat. Může to být pouhá reakce typu "Jaderný rozpad" nebo 
-komplexní schéma zahrnující duální porozitu, jiný druh sorpce pro mobilní a 
-imobilní póry a čtyři druhy reakcí v roztoku/hornině v mobilních/imobilních 
-pórech.
-
-\begin{figure}[h]
- \centering
- \includegraphics[scale=0.4]{./reaction_term.pdf}
- % reaction_term.pdf: 842x595 pixel, 72dpi, 29.70x20.99 cm, bb=0 0 842 595
- \caption{Struktura reakčního členu. Dělený box má v horní části fyzikální 
-kontext a v dolní části výčet modelů, které lze v daném kontextu použít.}
- \label{fig:reaction_term}
-\end{figure}
-
-
-Technicky umožňujeme použití 
-metody štěpení operátoru pro explicitní i implicitní transport, nicméně v 
-případě implicitního transportu je třeba volit dostatečně krátký časový krok.
-
-\subsubsection{Duální porozita}
-Model umožňuje popsat retenční vlastnosti slepých pórů a puklin, které se 
-efektivně projevují při simulacích na velkém měřítku. Porézní médium je 
-rozděleno na mobilní póry, mobilní porozita $\theta_m$, a imobilní póry, 
-imobilní porozita $\theta_i$. Mezi těmito póry nedochází k proudění vody, ale 
-dochází k výměně látky difúzí. Tato nerovnovážná výměna je řízena jednoduchou 
-lineární soustavou obyčejných diferenciálních rovnic:
-\begin{align}
-    \vartheta_m \partial_t c_m &= D_{dp} ( c_i - c_m), 
-\label{eqn:dual_porosity_ode1}\\
-    \vartheta_i \partial_t c_i &= D_{dp} ( c_m - c_i), 
-\label{eqn:dual_porosity_ode2}
-\end{align}
-kde $c_m$ je koncentrace látky v mobilní zóně, $c_i$ je koncentrace látky v 
-imobilní zóně a $D_{dp}$ je koeficient difúze mezi zónami.
-
-
-\subsubsection{Sorpce}
-Implementace rovnovážných sorpcí byla kompletně předělána. Byla zachována 
-možnost zadávat všechny parametry pomocí časo-prostorových polí, nicméně pro 
-případ parametrů konstantních na jednotlivých regionech je implementován výpočet 
-pomocí předpočítaných interpolací, který umožňuje efektivní výpočet jak pro 
-lineární tak nelineární sorpční izotermy. Výpočet rovnovážné sorpce pro jednu 
-látku spočívá v řešení soustavy rovnic sestávající z bilance hmoty,
-\begin{equation}
-\label{eq:mass_balance_sorption}
-\th \varrho_l c_l + (1-\th) \varrho_s M_s c_s = c_T = const.
-\end{equation}
-a z empirického vztahu nazývaného sorpční izoterma:
-\[
-    c_s=f(c_l).
-\]
-V těchto rovnicích jsou neznámé hmotnostní koncentrace látky v roztoku $c_l$ a 
-molární koncentrace látky v hornině $c_s$, další veličiny jsou hustota 
-rozpouštědla (vody) $\varrho_l$, hustota horniny $\varrho_s$, molární hmotnost 
-látky $M_s$ a celková koncentrace $c_T$. Výpočet probíhá tak, že po transportu 
-látky je porušena sorpční rovnováha, z rovnice \eqref{eq:mass_balance_sorption} 
-se vypočte celková koncentrace (celková hustota hmotnosti látky) a pak se 
-naleznou nové rovnovážné hodnoty $c_s$, $c_l$.
-
-Momentálně jsou implementovány lineární, Langmuierova a Freundlichova izoterma. 
-Obvykle jsou parametry rovnice závislé pouze na látce a regionu a pro 
-jednotlivé elementy jednoho regionu je třeba spočítat rovnovážné koncentrace pro 
-různé hodnoty celkové koncentrace $c_T$. V tom případě uvažujeme graf izotermy 
-v otočené soustavě (viz. Obr. 3).
-
-Hodnoty veličiny
-\[
-    Y=-\mu_s c_l + \mu_l c_s =  -M_s(1-\theta) \varrho_s c_l + \theta\rho_l 
-\]
-
-v závislosti na $c_T$ jsou tabelovány a mezihodnoty dopočítávány lineární 
-interpolací. Rovnovážné koncentrace pak dostaneme zpětným otočením:
-\[
-    c_l = \frac{\mu_l c_T + \mu_s Y}{\mu_s^2+\mu_l^2},\quad c_s = 
-\frac{-\mu_s c_T - \mu_l Y}{\mu_s^2 + \mu_l^2}.
-\]
-
-Tímto způsobem jsme schopni počítat i nelineární sorpce stejně efektivně jako 
-lineární. Tabulka \ref{tab:isoterm_timing} shrnuje výsledky benchmarkových 
-testů. Porovnáváme čas výpočtu sorpcí (v sekundách) pro tři různé izotermy a 
-tři 
-různé verze kódu. V prvním sloupci jsou časy původní implementace z verze 1.6.7. 
-Ve druhém sloupci jsou výsledky pro implementaci využívající interpolace při 
-prostorově konstantních parametrech izoterm. Dosáhli jsme značného zrychlení 
-pro 
-nelineární izotermy. Ve třetím sloupečku jsou časy při použití  plně prostorově 
-závislých parametrů, kde je nelineární rovnice řešena pro každý element, látku 
-a časový krok. Zde je ještě prostor pro optimalizace. Přibližně $11$s trvá 
-výpočet prostorově závislých parametrů nicméně i po odečtení tohoto konstantního 
-faktoru jsou časy výrazně horší než pro verzi 1.6.7. Tuto variantu však 
-neplánujeme používat pro rozsáhlé oblasti a hoší výkon proto nepředstavuje 
-praktické omezení. Další optimalizace by bylo možné dosáhnout použitím Newtonovy 
-metody pro řešení nelineárních rovnic, jako tomu bylo ve verzi 1.6.7. Zde 
-používáme metodu pomalejší, ale stabilnější a umožňující snadné přidávání nových 
-izoterm.
-
-\renewcommand{\arraystretch}{1.5}
-\begin{table}
-\begin{center}
-\begin{tabular}{|l||c|c|c|}
-\hline
-izoterma & verze 1.6.7 & v. 1.8.0 (interpolace) & v. 1.8.0 (přímý výpočet) \\
-\hline
-Lineární & 1.58        & 1.48                   & 28\\
-Langmuirova & 5.87     & 1.44                   & 36\\
-Freundlichova& 19.21   & 1.50                   & 44\\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{tab:isoterm_timing}
-Doba výpočtu sorpcí v sekundách pro různé izotermy a tři různé verze 
-kódu: původní, s použitím interpolací a při plně prostorově závislých 
-parametrech.}
-\end{table}
+\input reaction
 
 \section{Numerické metody}
-\subsection{Nespojitá Galerkinova metoda}
-\input dg
-
 \subsection{Transportní procesy na puklinách}
 \label{sc:ad_on_fractures}
 \input derivation_fractures
 
+
+
+\subsection{Nespojitá Galerkinova metoda}
+\input dg
+
 \subsection{Diagonalizovaná smíšená-hybridní metoda}
+\def\mr{\mathring}
+Model proudění popsaný v Sekci \ref{sc:darcy_flow} je řešen pomocí 
+smíšené-hybridní metody konečných prvků. Jako v předchozí kapitole označme 
+$\tau$ časový krok a $\mathcal T_d$ regulární simplexové dělení oblasti 
+$\Omega_d$, $d=1,2,3$. Označme $\vc W_d(T_d)\subset \vc H(div,T_d)$ prostor 
+Raviartových-Thomasových funkcí nultého řádu ($RT_0$) na elementu $T_d\in 
+\mathcal T_d$ a dále 
+\[
+    \vc W =  \vc W_1 \times \vc W_2 \times \vc W_3,\quad
+    \vc W_d = \prod_{T_d\in \mathcal T_d} \vc W_d(T_d).
+\]
+Podobně zavedeme
+\begin{equation}
+Q=Q_{1}\times Q_{2}\times Q_{3},
+\quad
+Q_{d}=L^{2}\left(  \Omega_{d}\right).
+\end{equation}
+Dále zavedeme pomocný prostor hodnot na stěně elementu $T_d\in \mathcal T_d$
+\begin{equation}
+    \mr Q(T_d)=\left\{  \mr q\in 
+    L^{2}(\partial T_d \setminus  \partial\Omega_d^D):
+    \mr q =\vc w\cdot \vc n|_{\partial T_d},
+    \vc w\in\vc W_d%
+    \right\}.
+\end{equation}
+a ztotožníme hodnoty na stěnách neoddělených prvkem nižší dimenze:
+\begin{equation}
+    \mr Q_d=\Big\{
+        \mr q\in\prod_{T \in \mathcal T_d} \mr Q(T);
+        \ \mr q|_{\partial T}=\mr q|_{\partial \tilde T}%
+        \quad\text{on face }F=\partial T\cap\partial \tilde T
+        \quad\text{ if }F\cap\Omega_{d-1}=\emptyset
+    \Big\}.
+\end{equation}
+Nakonec zavedeme $\mr Q = \mr Q_1 \times \mr Q_2 \times \mr Q_3$.
+
+Při řešení problému neustáleného Darcyovského proudění klasikou {\emph 
+smíšenou-hybridní metodou} hledáme trojici $(\mathbf{u},h,\mr h)  
+\in \vc W\times Q\times\mr Q$ splňující sedlo-bodovou soustavu 
+\begin{align}
+    a(\vc u,\vc v)  +b(\vc v, p) + \mr b(\vc v, \mr p)
+        &=\langle g,\vc v \rangle, \qquad\forall \vc v\in \vc W,
+        \label{eq:hybrid-frac-1}\\
+    b(\vc u, q ) + \mr b( \vc u, \mr q) - c(p, \mr p, q, \mr q)
+        &= \langle f, (q,\mr q) \rangle,
+        \qquad\forall q\in Q,\ \mr q\in \mr Q, 
+        \label{eq:hybrid-frac-2}
+\end{align}
+kde 
+\begin{align}
+    \label{eq:weak_term_a}
+    a(\vc u, \vc v) &= \sum_{d=1}^{3}\sum_{T\in \mathcal T_d}
+    \int_{T} \frac{1}{\delta_{d}}\tn K_{d}^{-1} 
+    \vc u_d\cdot \vc v_d\,dx,
+    \\
+    \label{eq:weak_term_b}
+    b(\vc u, q)  &= -\sum_{d=1}^{3}\sum_{T\in \mathcal T_d}
+    \int_{T} q_d\,\div \vc u_d\,dx,
+    \\
+    \label{eq:weak_term_bf}
+    \mr b(\vc u, \mr q)   &= \sum_{d=1}^{3}\sum_{T\in \mathcal T_d}
+    \int_{\partial T\setminus\partial\Omega_{d}}
+        \mr q|_{\partial T} ( \vc u_d\cdot\vc n)\,ds,
+    \\
+    \label{eq:weak_term c}
+    c(h, \mr h, q, \mr q) &= c_f(h, \mr h, q, \mr q) 
+    + c_t(h, \mr h, q, \mr q) + c_R(\mr h, \mr q)
+    \\
+    c_f(h, \mr h, q, \mr q)&=\sum_{d=2,3}\sum_{T\in \mathcal T_d}
+        \int_{\partial T \cap\Omega_{d-1}} \sigma_{d} 
+        (p_{d-1} - \mr p_d)(q_{d-1} - \mr q_d)\,ds
+    \\
+    c_t(h, \mr h, q, \mr q)&= \sum_{d=1}^{3}\sum_{T\in \mathcal T_d}
+        \int_{T} \frac{\delta_d S_d}{\tau} h_d q_d\,dx,
+    \\    
+    c_R(\mr h, \mr q)&=
+    \int_{\partial T\setminus\partial\Omega_{d}}
+        \sigma_d^R\, h_d \mr q_d \,ds,
+    \\
+    \langle g, \vc v \rangle  & =
+    -\sum_{d=1}^{3}\sum_{T\in\mathcal T_d}
+    \int_{\partial T\cap\partial\Omega_N} 
+        p_d^D\, (\vc v \cdot \vc n)  \,ds,
+    \\
+    \langle f, q \rangle  &=
+    -\sum_{d=1}^{3}\int_{\Omega_d} \delta_{d}\,f_d\,q_{d}\,dx,
+    \\
+        &\phantom{=}+
+    \sum_{d=1}^{3}\sum_{T\in\mathcal T_d}
+    \int_{\partial T\cap\partial\Omega_N} 
+        q_d^N \mr q_d - \sigma_d^R\, h_d^R \mr q_d\,ds.
+    \\
+        &\phantom{=}-c_t(\tilde h, \mr{\tilde{h}}, q, \mr q)
+    \label{eq:weak_term_f}%    
+\end{align}
+Všechny veličiny jsou míněny v čase $t$, jen $\tilde h$ je tlak v čase $t-\tau$.
+
+Výhodou smíšené=hybridní metody je, že lze soustavu $(\ref{eq:hybrid-frac-1} - 
+\ref{eq:hybrid-frac-2})$ zredukovat eliminací proměnných $\vc u$ a $q$ na 
+řídkou pozitivně definitní soustavu pro proměnnou $\mr q$. Tu pak lze efektivně 
+řešit pomocí předpodmíněné metody sdružených gradientů. Bohužel se ukazuje, že 
+výsledná soustava nesplňuje diskrétní princip maxima což zejména pro krátké 
+časové kroky $\tau$ může vést k nefyzikálním oscilacím. Jedním z možných řešení 
+je diagonalizace metody (lumped mixed-hybrid method) navržená v 
+\cite{younes_2006}. Tato metoda byla implementována i ve Flow123d. 
+Spočívá v nahrazení formy $c_t$ formou
+\[
+    c_t(h, \mr h, q, \mr q)= \sum_{d=1}^{3}\sum_{T\in \mathcal T_d}
+        \sum_{i=1}^{d+1} \alpha_{T,i} \abs{T} \frac{\delta_d S_d}{\tau} 
+        \left(\mr h|_{S_{T,i}}\,  \mr q|_{S_{T,i}}\right),
+\]
+kde $\abs{T}$ je velikost elementu, $S_{T,i}$ je stěna $i$ elementu $T$, a 
+$\mr h|_{S_{T,i}}$ je stupeň volnosti na hraně totožné se stěnou $S_{T,i}$. 
+váhy $\alpha_{T,i}$ je možno volit $1/d$. 
+Po vyřešení soustavy je třeba modifikovat rychlostní pole $\vc u$ přičtením 
+časového členu. Takto modifikovaná soustava již splňuje diskrétní princip 
+maxima a nevykazuje oscilace. Na Obrázku \ref{fig:LMH} je porovnání výsledků 
+při použití klasického MH schémat a LMH schématu. U MH schématu jsou patrné 
+oscilace na čele vlny a minimální hodnota je výrazně menší než nula. 
+
+\begin{figure}
+    \begin{center}
+       \includegraphics[width=0.4\textwidth]{MH.png}
+       \includegraphics[width=0.405\textwidth]{LMH.png}        
+    \end{center}
+    \caption{Porovnání MH schématu (vlevo) a LMH schématu (vpravo), 
+$\tau=10^{-4}$.}
+    \label{fig:LMH}
+\end{figure}
+
+
+
 
 
 \subsection{Lineární řešič BDDCML}
-Ve spolupráci s Jakubem Šístkem byly dokončeny práce na využití jeho 
-paralelního řešiče implementujícího víceúrovňovou metodu BDDC. Práce zahrnovaly 
-jak úpravy na straně Flow123d tak na straně knihovny. Aplikace metody BDDC na 
-úlohy proudění s kombinacemi prvků různé dimenze je originální. Náročné bylo 
-zejména zvládnutí velkých rozdílů ve vodivostech na rozhraních sub-struktur 
-jednotlivých procesorů. Velké rozdíly se mohou objevit, pokud je rozhraní mezi 
-prvky různé dimenze, kde může docházet k velkým skokům vodivosti na hranici 
-rozhraní. Pro zvládnutí této heterogenity ve vodivosti bylo navrženy a 
-otestovány tři metody vážení tlaků na rozhraních. Uvažujme bod $X$ na rozhraní 
-sub-struktur $s=1,\dots,n$. Hodnota tlaku $p$ v tomto bodě je rovna váženému 
-průměru tlaků $p_s$ na jednotlivých sub-strukturách, 
-\[
-    p = \sum_{s=1}^n p_s. 
-\]
-
-Standardní volba vah $w_s=1/n$ (aritmetický průměr) není vhodná pro heterogenní 
-problémy. Pokud jsou materiálové parametry (v našem případě vodivost a 
-rozevření puklin) výrazně rozdílné na jednotlivých sub-strukturách, používá se 
-$\rho$-škálování:
-\[
-    w_s=\frac{\rho_s}{\sum_{s=1}^n \rho_s}.
-\]
-To ovšem předpokládá konstantní materiálové charakteristiky na jednotlivých 
-sub-strukturách v našem případě $\rho_s=\frac{d}{\text{tr}(\tn K^{-1})}$, 
-kde $d$ dimenze elementu a $\tn K$ je tenzor 
-hydraulické vodivosti na elementu sub-struktury přiléhající k $X$. Kombinace 2D 
-a 3D elementů však může vést k oscilacím, pokud se 
-hodnoty $\rho_s$ výrazně mění podél rozhraní. Proto jsme navrhli upravené 
-{\emph diagonální škálování}
-\[
-    \rho_s=C^s_{jj} + \frac{1}{A^s_{kk}},
-\]
-kde používáme přímo hodnoty z 
-asemblované matice, $C^s_{jj}$ je diagonální hodnota z matice komunikace mezi 
-dimenzemi. Ta je nenulová pouze v případě, že rozhraní odděluje elementy různé 
-dimenze. Hodnota $A^s_{kk}$ je diagonální prvek z lokální matice elementu 
-přiléhajícímu k rozhraní, chová se podobně jako $\tn K^{-1}$, ale zahrnuje i 
-vliv geometrie. 
-
-
-
-
-Tabulka \ref{tab:tunnel_averaging} demonstruje porovnání 
-jednotlivých metod vážení, aritmetické vážení dává špatné výsledky i pro malý 
-počet procesorů a někdy naprosto selhává (N=128, 1024), $\rho$-škálování dává 
-většinou uspokojivé výsledky, ale selhává ve stejných případech jako aritmetické 
-vážení. Jde o ty případy, kdy rozhraní sub-struktur leží 
-mezi dimenzemi. Toto dělení je prováděno softwarem METIS a výskyt těchto 
-patologických případů lze sice vhodným nastavením snížit, ale ne zcela vyloučit 
-a to zejména pro větší počet sub-struktur. Poslední navržené škálování  však 
-dobře funguje i s problematickým rozdělením. To demonstruje poslední sloupeček 
-tabulky, kde
-počet iterací ani číslo podmíněnosti příliš neroste s počtem sub-struktur.
-
-\begin{table}[t]
-\begin{center}
-\begin{tabular}
-[c]{|cc|ccc|cc|cc|cc|}\hline
-\multirow{2}{*}{$N$} & \multirow{2}{*}{$n/N$} &
-\multirow{2}{*}{$n_{\Gamma}$} & \multirow{2}{*}{$n_f$} &
-\multirow{2}{*}{$n_c$} & \multicolumn{2}{c|}{aritmetický průměr} 
-&
-\multicolumn{2}{c|}{$\rho$-škálování} & \multicolumn{2}{c|}{diagonální 
-škálování}\\
-&  &  &  &  & its. & cond. & its. & cond. & its. & cond.\\\hline
-32 & 245k & 20k & 106 & 322 & 637 & 9811.7 & 110 & 1467.8 & 112 & 1514.1\\
-64 & 123k & 28k & 192 & 597 & 618 & 10254.1 & 62 & 115.1 & 63 & 117.7\\
-128 & 61k & 45k & 413 & 1293 & 2834 & 1.0e+11 & 206 & 401641.4 & 75 & 194.4\\
-256 & 31k & 72k & 902 & 2791 & 799 & 11172.9 & 117 & 512.9 & 119 & 526.7\\
-512 & 15k & 110k & 2009 & 6347 & 883 & 15449.6 & 136 & 1160.1 & 137 & 1143.4\\
-1024 & 8k & 155k & 4575 & 14725 & n/a & 2.5e+10 & 504 & 99023.6 & 173 &
-897.0\\\hline
-\end{tabular}
-\end{center}
-\caption{\label{tab:tunnel_averaging}
-Vliv druhu vážení na počet iterací a odhad podmíněnosti matice.
-\emph{tunel Bedřichov}, 2D a 3D elementy, 7.8 miliónů neznámých}
-\end{table}
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=0.48\textwidth]{timing_melechov_large} 
-\includegraphics[width=0.48\textwidth]{speedup_melechov_large}
-\end{center}
-\caption{\label{fig:timing_Melechov_large}
-Strong scaling test for the problem of the \emph{Melechov locality}
-containing 2D and 3D elements and 15M unknowns, computational time (left) and
-speed-up (right) separately for set-up and PCG phases, and their sum (solve).}
-\end{figure}
-
-Ve druhé polovině roku 2013 byl řešič využívající knihovnu BDDCML začleněn do 
-hlavní produkční větve a součástí verze 1.8.0. S využitím knihovny BDDCML bylo 
-dosaženo velmi dobré silné škálovatelnosti při řešení velkých reálných úloh 
-(miliony elementů) při využití až tisíce výpočetních jader, viz Obrázek~2. 
-Výsledky byly shrnuty v článku \cite{SistekBDDC} zaslaného k recenzi.
-
+\input bddcml
 
 
 
@@ -647,10 +597,22 @@ A discontinuous {G}alerkin method with weighted averages for advection--diffusio
 \emph{IMA Journal of Numerical Analysis}, 29(2):235--256, 2009.
 
 
+\bibitem{younes_2006}
+A. Younes, P. Ackerer, F. Lehmann.
+A new mass lumping scheme for the mixed hybrid finite element method,
+\emph{Int. J. Numer. Meth. Engng}, 67:89–107, 2006.
+
+
 \bibitem{martin_modeling_2005}
 V. Martin, J. Jaffr{\'e}, J.E. Roberts.
 Modeling Fractures and Barriers as Interfaces for Flow in Porous Media,
 \emph{{SIAM} Journal on Scientific Computing}, 26(5):1667--1691, 2005.
+
+
+\bibitem{millington_quirk}
+R.J. Millington, J.P. Quirk.
+Permeability of porous solids, 
+\emph{Transactions of the Faraday Society}, 57:1200--1207, 1961.
 
 
 \bibitem{SistekBDDC}
