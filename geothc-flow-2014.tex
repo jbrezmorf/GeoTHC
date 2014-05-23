@@ -9,6 +9,7 @@
 \usepackage{amsfonts,amsmath}
 \usepackage{etoolbox}
 \usepackage{graphicx}
+% \usepackage{hyperref}
 \usepackage{multirow}
 \usepackage{titlesec}
 \setcounter{secnumdepth}{3}
@@ -35,6 +36,42 @@ top=1.49in, bottom=1.49in]{geometry}
 
 %macro for hyperlinks (dummy)
 \def\hyperA#1#2{#2}
+
+
+
+% ***************************************** SYMBOLS
+\def\abs#1{\lvert#1\rvert}
+\def\argdot{{\hspace{0.18em}\cdot\hspace{0.18em}}}
+\def\avg#1{\left\{#1\right\}}
+\def\bb{\vc b}
+\def\d{\mathrm{d}}
+\def\D{{\tn D}}
+\def\div{\operatorname{div}}
+\def\Eh{\mathcal E_h}       % edges of \Th
+\def\Ehb{\mathcal E_{h,B}}  % edges of \Th on boundary
+\def\Ehcom{\mathcal E_{h,C}}         % edges of \Th on interface with lower dimension
+\def\Ehdir{\mathcal E_{h,D}}         % Dirichlet edges of \Th
+\def\Ehint{\mathcal E_{h,I}}       % interior edges of \Th
+\def\Ehneu{\mathcal E_{h,N}}         % Neumann or Robin edges of \Th
+\def\grad{\nabla}
+\def\jmp#1{[#1]}
+\def\n{\vc n}
+\def\nn{\vc n}
+\def\prtl{\partial}
+\def\R{\mathbb R}
+\def\Real{\mathbb R}
+\def\sc#1#2{\left(#1,#2\right)}
+\def\Th{\mathcal T_h}       % triangulation
+\def\th{\vartheta}
+\def\tn#1{{\mathbb{#1}}}    % tensor
+\def\Tr{\operatorname{Tr}}
+\def\vc#1{\mathbf{\boldsymbol{#1}}}     % vector
+\def\wavg#1{\avg{#1}_\omega}
+\def\where{\,|\,}
+%***************************************************************************
+
+
+
 
 
 \begin{document}
@@ -183,6 +220,7 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 
 \subsection{Fyzikální modely}
 \subsubsection{Nestacionární proudění}
+\input darcy_flow
 
 \subsubsection{Advekčně-difúzní model transportu rozpuštěných látek}
 \label{sc:transport_model}

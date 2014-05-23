@@ -1,0 +1,124 @@
+
+
+Uvažujeme Darcyho model pro rychlost proudění v porézním a rozpukaném prostředí:
+\begin{equation}
+    \label{eq:darcy}
+    \vc w = -\tn K \grad H \quad\text{on }\Omega_d,\ \text{for $d=1,2,3$}.
+\end{equation}
+% We drop the dimension index of quantities in equations if it is the same as the dimension of the set where the equation holds.
+V \eqref{eq:darcy}, $\vc w_d$ \units{}{1}{-1} je makroskopická rychlost,
+$\tn K_d$ je tenzor hydraulické vodivosti a $H_d$ \units{}{1}{} je piezometrická výška. Dále zavedeme hustotu toku $\vc q_d$ 
+ \units{}{4-d}{-1} vztahem
+\[
+    \vc q_d = \delta_d \vc w_d,
+\]
+kde
+\hyperA{DarcyFlowMH-Data::cross-section}{$\delta_d$} 
+\units{}{3-d}{} je parametr rozevření, tj. $\delta_3=1$, $\delta_2$ \units{}{1}{} je tloušťka pukliny a $\delta_1$ \units{}{2}{} je průřez kanálu.
+Tok $q_d$ představuje objem vody, který proteče skrze jednotkový čtverec ($d=3$),
+jednotkovou úsečku ($d=2$), resp. bod ($d=1$) za sekundu. 
+Tenzor vodivosti je dán rovnicí \penalty-500
+$\tn K_d = k_d \tn A_d$, kde
+\hyperA{DarcyFlowMH-Data::conductivity}{$k_d>0$} je hydraulická vodivost \units{}{1}{-1} a
+\hyperA{DarcyFlowMH-Data::anisotropy}{$\tn A_d$} je
+$3\times 3$ bezrozměrný tenzor anizotropie, u nějž předpokládáme symetrii a pozitivní definitnost. Piezometrická výška $H_d$ tlaková výška
+$h_d$ jsou provázány vztahem $H_d = h_d + z$, za předpokladu, že gravitační síla působí ve směru $(0,0,-1)$. 
+Kombinací uvedených vztahů dostáváme Darcyův zákon
+\begin{equation}
+    \label{eq:darcy_flux}
+    \vc q = -\delta k\tn A \grad (h+z)  \qquad\text{on }\Omega_d,\ \text{for $d=1,2,3$}.
+\end{equation}
+
+S využitím rovnice kontinuity pro nasycené prostředí a dimenzionální redukce (detaily jsou popsány v sekci \ref{sc:ad_on_fractures}) dostaneme rovnici
+\begin{equation}
+    \label{eq:continuity}
+    \prtl_t (\delta S\, h) + \div \vc q = F \qquad \text{on }\Omega_d,\ \text{for $d=1,2,3$},
+\end{equation}
+kde \hyperA{DarcyFlowMH-Data::storativity}{$S_d$} \units{}{-1}{} je storativita a $F_d$ \units{}{3-d}{-1} je zdrojový člen. V našem případě jsou principiálními neznámými systému
+(\ref{eq:darcy_flux}, \ref{eq:continuity}) tlaková výška $h_d$ a tok $\vc q_d$.
+
+
+Storativita $S_d>0$ může být vyjádřena jako
+\begin{equation}
+  S_d = \gamma_w(\beta_r + \nu \beta_w),
+\end{equation}
+kde $\gamma_w$ \units{1}{-2}{-2} je specifická hmotnost vody, $\nu$ je porozita $[-]$, $\beta_r$ je kompresibilita porézního materiálu (horniny)
+a $\beta_w$ je kompresibilita vody \units{-1}{1}{-2}. Pro ustálené problémy definujeme $S_d=0$ pro všechny dimenze $d=1,2,3$.
+Zdrojový člen $F_d$ na pravé straně \eqref{eq:continuity} se skládá z objemové hustoty předepsaných zdrojů
+\hyperA{DarcyFlowMH-Data::water-source-density}{$f_d$} \units{}{}{-1} a z toku z vyšší dimenze. 
+Přesný vztah uvedeme zvlášť pro každou dimenzi:
+
+Na $\Omega_3$ máme pouze $F_3  = f_3$ \units{}{}{-1}.
+
+Na množině $\Omega_2 \cap \overline\Omega_3$ je puklina obklopena jedním 3D povrchem z každé strany (případně pouze jedním povrchem, je-li \uv{puklina} na hranici).
+Na $\prtl\Omega_3 \cap \Omega_2$ předepisujeme okrajovou podmínku Robinova typu
+\begin{align*}
+        \vc{q}_3\cdot \vc n^{+} &= q_{32}^{+} =\sigma_{3} (h_3^{+}-h_2),\\
+        \vc{q}_3\cdot \vc n^{-} &= q_{32}^{-} =\sigma_{3} (h_3^{-}-h_2),
+\end{align*}
+kde $\vc{q}_3\cdot\vc n^{+/-}$ \units{}{1}{-1} je výtok z $\Omega_3$, $h_3^{+/-}$ je
+stopa tlakové výšky na $\Omega_3$, $h_2$ je tlaková výška na $\Omega_2$ a
+$\sigma_{3}$ \units{}{}{-1} je parametr přestupu daný rovnicí (viz sekci \ref{sc:ad_on_fractures} a \cite{martin_modeling_2005})
+\[
+\label{e:sigma3_law}
+  \sigma_3 = \sigma_{32} \frac{2\tn K_2 :\vc n_2\otimes\vc n_2 }{\delta_2}.
+\]
+Zde $\vc n_2$ je jednotková normála k puklině (na orientaci nezáleží).
+Na druhou stranu, součet komunikačních toků $q_{32}^{+/-}$ tvoří
+objemový zdroj na $\Omega_2$.  Proto $F_2$ \units{}{1}{-1} na pravé straně \eqref{eq:continuity} je dáno vztahem
+\begin{equation}
+   \label{source_2D}
+   F_2 = \delta_2 f_2 + (q_{32}^{+} + q_{32}^{-}).
+\end{equation}
+
+Komunikace mezi $\Omega_2$  a  $\Omega_1$ je podobné.  Nicméně ve 3D prostoru
+může 1D kanál propojovat více 2D puklin $1,\dots, n$. Máme tedy $n$
+nezávislých výtoků z $\Omega_2$:
+\begin{equation*}
+        \vc{q}_2\cdot \vc n^{i} = q_{21}^{i} =\sigma_{2} (h_2^{i}-h_1),
+\end{equation*}
+kde $\sigma_2$ \units{}{1}{-1} je parametr přestupu vyintegrovaný přes průřez pukliny $i$:
+\[
+\label{e:sigma2_law}
+  \sigma_2 = \sigma_{21} \frac{2\delta_2^2\tn K_1:{\vc n_1^i}\otimes{\vc n_1^i}}{\delta_1}.
+\]
+Zde $\vc n_1^i$ je jednotková normála ke kanálu, tečná k puklině $i$.
+Součet toků představuje část $F_1$ \units{}{2}{-1}:
+\begin{equation}
+   \label{source_1D}
+   F_1 = \delta_1 f_1 + \sum_{i=1}^n q_{21}^{i}. 
+\end{equation}
+Poznamenejme, že přímá komunikace mezi 3D a 1D v modelu není uvažována.
+Koeficienty přestupu
+\hyperA{DarcyFlowMH-Data::sigma}{$\sigma_{32}$} \units{}{}{} a
+\hyperA{DarcyFlowMH-Data::sigma}{$\sigma_{21}$} \units{}{}{} jsou nezávislé škálovací parametry reprezentující poměr příšné a podélné hydraulické vodivosti v puklině.
+
+Pro jednoznačnou řešitelnost úlohy je třeba předepsat okrajové podmínky. V současnosti jsou podporovány tři základní typy. 
+Předpokládejme disjunktní dělení hranice
+\[
+    \prtl\Omega_d = \Gamma_d^D \cap \Gamma_d^N \cap \Gamma_d^R
+\]
+na segmenty, kde je uvažována Dirichletova, Neumannova, resp. Robinova podmínka. Předepisujeme tedy
+\begin{align}
+    h_d &= h_d^D        &&\text{ na }\Gamma_d^D,\\
+    \vc q_d \cdot \vc n &= q_d^N         &&\text{ na }\Gamma_d^N,\\
+    \vc q_d \cdot \vc n &= \sigma_d^R ( h_d - h_d^R)     &&\text{ na }\Gamma_d^R,
+\end{align}
+kde
+\hyperA{DarcyFlowMH-Data::bc-pressure}{$h_d^D$, $h_d^R$} 
+je daná tlaková výška \units{}{1}{}. Alternativně lze předepsat piezometrickou výšku
+\hyperA{DarcyFlowMH-Data::bc-piezo-head}{$H_d^D$, resp. $H_d^R$}.
+\hyperA{DarcyFlowMH-Data::bc-flux}{$q_d^N$} 
+je daná povrchová hustota hraničního výtoku \units{}{4-d}{-1} a
+\hyperA{DarcyFlowMH-Data::bc-robin-sigma}{$\sigma_d^R$} 
+je koeficient přestupu \units{}{3-d}{-1}.
+Úloha je řešitelná, je-li předepsána alespoň Dirichletova nebo Robinova okrajová podmínka na každá komponentě množiny $\Omega_1 \cup \Omega_2 \cup \Omega_3$ a $\sigma_d >0$ pro $d=2,3$.
+
+Pro neustálené proudění je dále třeba zadat počáteční podmínku pro tlakovou výšku
+\hyperA{DarcyFlowMH-Data::init-pressure}{$h_d^0$} 
+nebo pro piezometrickou výšku
+\hyperA{DarcyFlowMH-Data::init-piezo-head}{$H_d^0$}.
+
+
+
+
