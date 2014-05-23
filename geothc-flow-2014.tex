@@ -3,6 +3,8 @@
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
 \renewcommand{\rmdefault}{\sfdefault}
+%\usepackage{sfmath}
+%\usepackage{sansmath}
 
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
@@ -210,7 +212,7 @@ pouze na explicitní transport pomocí metody štěpení operátoru.
 Ve verzi 1.8.0 je také použita metoda štěpení operátoru, ale je možné kombinovat 
 jednotlivé lokální modely. V jednom časovém kroku se nejprve spočítá transport 
 látky bez dalších vlivů a následně jsou v každém elementu spočteny
-modely reakčního členu: nerovnovýžná výměna s duálními póry, rozpady a 
+modely reakčního členu: nerovnovážná výměna s duálními póry, rozpady a 
 jednoduché reakce v primárních i duálních pórech v rozpuštěné i sorbované fázi a 
 nakonec je spočtena rovnovážná sorpce v primárních i duálních pórech. Tyto 
 modely je možno kombinovat jak je znázorněno na Obrázku 
@@ -232,10 +234,10 @@ kontext a v dolní části výčet modelů, které lze v daném kontextu použí
 
 Technicky umožňujeme použití 
 metody štěpení operátoru pro explicitní i implicitní transport, nicméně v 
-případě implicitního tranportu je třeba volit dostatečně krátký časový krok.
+případě implicitního transportu je třeba volit dostatečně krátký časový krok.
 
 \subsubsection{Duální porozita}
-Model umožňuje popsat retenční vlastnosti slepých pórů a pulkin, které se 
+Model umožňuje popsat retenční vlastnosti slepých pórů a puklin, které se 
 efektivně projevují při simulacích na velkém měřítku. Porézní médium je 
 rozděleno na mobilní póry, mobilní porozita $\theta_m$, a imobilní póry, 
 imobilní porozita $\theta_i$. Mezi těmito póry nedochází k proudění vody, ale 
@@ -256,7 +258,7 @@ Implementace rovnovážných sorpcí byla kompletně předělána. Byla zachová
 možnost zadávat všechny parametry pomocí časo-prostorových polí, nicméně pro 
 případ parametrů konstantních na jednotlivých regionech je implementován výpočet 
 pomocí předpočítaných interpolací, který umožňuje efektivní výpočet jak pro 
-lineární tak nelineární sorpční isotermy. Výpočet rovnovážné sorpce pro jednu 
+lineární tak nelineární sorpční izotermy. Výpočet rovnovážné sorpce pro jednu 
 látku spočívá v řešení soustavy rovnic sestávající z bilance hmoty,
 \begin{equation}
 \label{eq:mass_balance_sorption}
@@ -266,7 +268,7 @@ a z empirického vztahu nazývaného sorpční izoterma:
 \[
     c_s=f(c_l).
 \]
-V těchto rovnicích jsou neznámé hmotnosntí koncentrace látky v roztoku $c_l$ a 
+V těchto rovnicích jsou neznámé hmotnostní koncentrace látky v roztoku $c_l$ a 
 molární koncentrace látky v hornině $c_s$, další veličiny jsou hustota 
 rozpouštědla (vody) $\varrho_l$, hustota horniny $\varrho_s$, molární hmotnost 
 látky $M_s$ a celková koncentrace $c_T$. Výpočet probíhá tak, že po transportu 
@@ -274,10 +276,10 @@ látky je porušena sorpční rovnováha, z rovnice \eqref{eq:mass_balance_sorpt
 se vypočte celková koncentrace (celková hustota hmotnosti látky) a pak se 
 naleznou nové rovnovážné hodnoty $c_s$, $c_l$.
 
-Momentálně jsou implementovány lineární, Langmuierova a Freundlichova isoterma. 
+Momentálně jsou implementovány lineární, Langmuierova a Freundlichova izoterma. 
 Obvykle jsou parametry rovnice závislé pouze na látce a regionu a pro 
 jednotlivé elementy jednoho regionu je třeba spočítat rovnovážné koncentrace pro 
-různé hodnoty celkové koncentrace $c_T$. V tom případě uvažujeme graf isotermy 
+různé hodnoty celkové koncentrace $c_T$. V tom případě uvažujeme graf izotermy 
 v otočené soustavě (viz. Obr. 3).
 
 Hodnoty veličiny
@@ -294,27 +296,29 @@ interpolací. Rovnovážné koncentrace pak dostaneme zpětným otočením:
 
 Tímto způsobem jsme schopni počítat i nelineární sorpce stejně efektivně jako 
 lineární. Tabulka \ref{tab:isoterm_timing} shrnuje výsledky benchmarkových 
-testů. Porovnáváme čas výpočtu sorpcí (v sekundách) pro tři různé isotermy a tři 
+testů. Porovnáváme čas výpočtu sorpcí (v sekundách) pro tři různé izotermy a 
+tři 
 různé verze kódu. V prvním sloupci jsou časy původní implementace z verze 1.6.7. 
 Ve druhém sloupci jsou výsledky pro implementaci využívající interpolace při 
-prostorově konstantních parametrech isoterm. Dosáhli jsme značného zrychlení pro 
-nelineární isotermy. Ve třetím sloupečku jsou časy při použití  plně prostorově 
+prostorově konstantních parametrech izoterm. Dosáhli jsme značného zrychlení 
+pro 
+nelineární izotermy. Ve třetím sloupečku jsou časy při použití  plně prostorově 
 závislých parametrů, kde je nelineární rovnice řešena pro každý element, látku 
-a časový krok. Zde je ještě prostor pro optimalizace. Přibližně 11s trvá 
+a časový krok. Zde je ještě prostor pro optimalizace. Přibližně $11$s trvá 
 výpočet prostorově závislých parametrů nicméně i po odečtení tohoto konstantního 
 faktoru jsou časy výrazně horší než pro verzi 1.6.7. Tuto variantu však 
 neplánujeme používat pro rozsáhlé oblasti a hoší výkon proto nepředstavuje 
 praktické omezení. Další optimalizace by bylo možné dosáhnout použitím Newtonovy 
 metody pro řešení nelineárních rovnic, jako tomu bylo ve verzi 1.6.7. Zde 
 používáme metodu pomalejší, ale stabilnější a umožňující snadné přidávání nových 
-isoterm.
+izoterm.
 
 \renewcommand{\arraystretch}{1.5}
 \begin{table}
 \begin{center}
 \begin{tabular}{|l||c|c|c|}
 \hline
-isoterma & verze 1.6.7 & v. 1.8.0 (interpolace) & v. 1.8.0 (přímý výpočet) \\
+izoterma & verze 1.6.7 & v. 1.8.0 (interpolace) & v. 1.8.0 (přímý výpočet) \\
 \hline
 Lineární & 1.58        & 1.48                   & 28\\
 Langmuirova & 5.87     & 1.44                   & 36\\
@@ -323,7 +327,7 @@ Freundlichova& 19.21   & 1.50                   & 44\\
 \end{tabular}
 \end{center}
 \caption{\label{tab:isoterm_timing}
-Doba výpočtu sorpcí v sekundách pro různé isotermy a tři různé verze 
+Doba výpočtu sorpcí v sekundách pro různé izotermy a tři různé verze 
 kódu: původní, s použitím interpolací a při plně prostorově závislých 
 parametrech.}
 \end{table}
@@ -336,15 +340,17 @@ parametrech.}
 \label{sc:ad_on_fractures}
 \input derivation_fractures
 
-\subsection{"hrudková" smíšená-hybridní metoda}
-\subsection{lineární řešič BDDCML}
+\subsection{Diagonalizovaná smíšená-hybridní metoda}
+
+
+\subsection{Lineární řešič BDDCML}
 Ve spolupráci s Jakubem Šístkem byly dokončeny práce na využití jeho 
 paralelního řešiče implementujícího víceúrovňovou metodu BDDC. Práce zahrnovaly 
 jak úpravy na straně Flow123d tak na straně knihovny. Aplikace metody BDDC na 
 úlohy proudění s kombinacemi prvků různé dimenze je originální. Náročné bylo 
 zejména zvládnutí velkých rozdílů ve vodivostech na rozhraních sub-struktur 
 jednotlivých procesorů. Velké rozdíly se mohou objevit, pokud je rozhraní mezi 
-prvky různé dimenze, kde můze docházet k velkým skokům vodivosti na hranici 
+prvky různé dimenze, kde může docházet k velkým skokům vodivosti na hranici 
 rozhraní. Pro zvládnutí této heterogenity ve vodivosti bylo navrženy a 
 otestovány tři metody vážení tlaků na rozhraních. Uvažujme bod $X$ na rozhraní 
 sub-struktur $s=1,\dots,n$. Hodnota tlaku $p$ v tomto bodě je rovna váženému 
@@ -355,32 +361,53 @@ průměru tlaků $p_s$ na jednotlivých sub-strukturách,
 
 Standardní volba vah $w_s=1/n$ (aritmetický průměr) není vhodná pro heterogenní 
 problémy. Pokud jsou materiálové parametry (v našem případě vodivost a 
-rozevření puklin) výrazně rozdílné na jednotlových sub-strukturách, používá se 
-škálování $\rho$-škálování:
+rozevření puklin) výrazně rozdílné na jednotlivých sub-strukturách, používá se 
+$\rho$-škálování:
 \[
     w_s=\frac{\rho_s}{\sum_{s=1}^n \rho_s}.
 \]
 To ovšem předpokládá konstantní materiálové charakteristiky na jednotlivých 
-sub-strukturách v našem případě $\rho_s=\frac{\delta}{\text{tr}(\tn K^{-1})}$, 
-kde $\delta$ je efektivní pruřez pukliny a $\tn K$ je tenzor 
+sub-strukturách v našem případě $\rho_s=\frac{d}{\text{tr}(\tn K^{-1})}$, 
+kde $d$ dimenze elementu a $\tn K$ je tenzor 
 hydraulické vodivosti na elementu sub-struktury přiléhající k $X$. Kombinace 2D 
-a 3D elementů však může vést na výrazné oscilace podél rozhraní, pokud se 
+a 3D elementů však může vést k oscilacím, pokud se 
 hodnoty $\rho_s$ výrazně mění podél rozhraní. Proto jsme navrhli upravené 
-škálování $\rho_s=C^s_jj + \frac{1}{A^s_kk}$, kde používáme přímo hodnoty z 
-asemblované matice, $C^s_jj$ je diagonální hodnota z matice komunikace mezi 
+{\emph diagonální škálování}
+\[
+    \rho_s=C^s_{jj} + \frac{1}{A^s_{kk}},
+\]
+kde používáme přímo hodnoty z 
+asemblované matice, $C^s_{jj}$ je diagonální hodnota z matice komunikace mezi 
 dimenzemi. Ta je nenulová pouze v případě, že rozhraní odděluje elementy různé 
-dimenze. Hodnota $A^s_kk$ je diagonální prvek z lokální matice elementu 
+dimenze. Hodnota $A^s_{kk}$ je diagonální prvek z lokální matice elementu 
 přiléhajícímu k rozhraní, chová se podobně jako $\tn K^{-1}$, ale zahrnuje i 
 vliv geometrie. 
 
-\begin{table}[H]
+
+
+
+Tabulka \ref{tab:tunnel_averaging} demonstruje porovnání 
+jednotlivých metod vážení, aritmetické vážení dává špatné výsledky i pro malý 
+počet procesorů a někdy naprosto selhává (N=128, 1024), $\rho$-škálování dává 
+většinou uspokojivé výsledky, ale selhává ve stejných případech jako aritmetické 
+vážení. Jde o ty případy, kdy rozhraní sub-struktur leží 
+mezi dimenzemi. Toto dělení je prováděno softwarem METIS a výskyt těchto 
+patologických případů lze sice vhodným nastavením snížit, ale ne zcela vyloučit 
+a to zejména pro větší počet sub-struktur. Poslední navržené škálování  však 
+dobře funguje i s problematickým rozdělením. To demonstruje poslední sloupeček 
+tabulky, kde
+počet iterací ani číslo podmíněnosti příliš neroste s počtem sub-struktur.
+
+\begin{table}[t]
 \begin{center}
 \begin{tabular}
 [c]{|cc|ccc|cc|cc|cc|}\hline
 \multirow{2}{*}{$N$} & \multirow{2}{*}{$n/N$} &
 \multirow{2}{*}{$n_{\Gamma}$} & \multirow{2}{*}{$n_f$} &
-\multirow{2}{*}{$n_c$} & \multicolumn{2}{c|}{arithmetic avg.} &
-\multicolumn{2}{c|}{mod. $\rho$-scal.} & \multicolumn{2}{c|}{diagonal scal.}\\
+\multirow{2}{*}{$n_c$} & \multicolumn{2}{c|}{aritmetický průměr} 
+&
+\multicolumn{2}{c|}{$\rho$-škálování} & \multicolumn{2}{c|}{diagonální 
+škálování}\\
 &  &  &  &  & its. & cond. & its. & cond. & its. & cond.\\\hline
 32 & 245k & 20k & 106 & 322 & 637 & 9811.7 & 110 & 1467.8 & 112 & 1514.1\\
 64 & 123k & 28k & 192 & 597 & 618 & 10254.1 & 62 & 115.1 & 63 & 117.7\\
@@ -393,28 +420,8 @@ vliv geometrie.
 \end{center}
 \caption{\label{tab:tunnel_averaging}
 Vliv druhu vážení na počet iterací a odhad podmíněnosti matice.
-\emph{tunel Bed\v{r}ichov}, 2D a 3D elementy, 7.8 miliónů neznámých}
+\emph{tunel Bedřichov}, 2D a 3D elementy, 7.8 miliónů neznámých}
 \end{table}
-
-
-Tabulka \ref{tab:tunnel_averaging} demonstuje porovnání 
-jednotlivých metod vážení, aritmetické vážení dává špatné výsledky i pro malý 
-počet procesorů a někdy naprosto selhává (N=128, 1024), $\rho$-škálování dává 
-většinou uspokojivé výsledky, ale selhává ve stejných případech jako aritmetické 
-vážení. Jde o ty případy, kdy rozhraní sub-struktur leží 
-mezi dimenzemi. Toto dělení je prováděno softwarem METIS a výskyt těchto 
-patologických případů lze sice vhodným nastavením snížit, ale ne zcela vyloučit 
-a to zejména pro větší počet sub-struktur. Poslední navržené škálování  však 
-dobře funguje i s problemetickým rozdělením. To demonstruje poslední sloupeček 
-tabulky, kde
-počet iterací ani číslo podmíněnosti příliš neroste s počtem sub-struktur.
-
-
-Ve druhé polovině roku 2013 byl řešič využívající knihovnu BDDCML začleněn do 
-hlavní produkční větve a součástí verze 1.8.0. S využitím knihovny BDDCML bylo 
-dosaženo velmi dobré silné škálovatelnosti při řešení velkých reálných úloh 
-(miliony elementů) při využití až tisíce výpočetních jader, viz Obrázek 2. 
-Výsledky byly shrnuty v článku \cite{SistekBDDC} zaslaného k recenzi.
 
 \begin{figure}[h]
 \begin{center}
@@ -427,21 +434,204 @@ containing 2D and 3D elements and 15M unknowns, computational time (left) and
 speed-up (right) separately for set-up and PCG phases, and their sum (solve).}
 \end{figure}
 
+Ve druhé polovině roku 2013 byl řešič využívající knihovnu BDDCML začleněn do 
+hlavní produkční větve a součástí verze 1.8.0. S využitím knihovny BDDCML bylo 
+dosaženo velmi dobré silné škálovatelnosti při řešení velkých reálných úloh 
+(miliony elementů) při využití až tisíce výpočetních jader, viz Obrázek~2. 
+Výsledky byly shrnuty v článku \cite{SistekBDDC} zaslaného k recenzi.
+
+
+
 
 \section{Uživatelské rozhraní}
 \subsection{Vstupní sooubor s hierarchickým formátem}
+Až do verze 1.6.7 byl hlavní vstupní soubor ve formátu \verb'INI', 
+ten obsahoval odkazy na další soubory se vstupními daty. Formát těchto souborů 
+nebyl nijak sjednocen a pro každý soubor musela existovat samostatná čtecí 
+funkce. Dokumentace těchto souborů byla neúplná.
+
+V rámci projektu bylo navrženo nové vstupní rozhraní s následujícími 
+vlastnostmi.
+\begin{itemize}
+\item Rozhraní umožňuje deklarovat hierarchickou strukturu vstupů 
+přímo ve zdrojovém kódu a to nezávisle na konkrétním formátu vstupního souboru.
+%
+\item V rámci deklarace je možné vstupy dokumentovat a tuto dokumentaci je 
+možné vypsat uživateli nebo vygenerovat technickou dokumentaci pomocí 
+typografického systému \LaTeX.
+%
+\item Rozhraní implementuje čtení vstupních dat z 
+vhodných hierarchických vstupních formátu (aktuálně podporován formát JSON s 
+drobnými rozšířeními). Během čtení je prováděna kontrola vstupních dat vůči 
+deklarované struktuře.
+%
+\item Rozhraní poskytuje jednotný přístup k načteným datům na straně programu. 
+\end{itemize}
+
+V průběhu roku 2012 bylo toto vstupní rozhraní implementováno. Struktura 
+vstupních dat je popsána pomocí tříd (ve jmenném prostoru \verb'Inut::Type') 
+pro základní typy dat: \verb'String', \verb'Bool', \verb'Integer', 
+\verb'Double', \verb'FileName' a \verb'Selection' (obdoba typu enum z jazyka 
+C). Objekty třídy \verb'Array' definují složený datový typ, seznam dat 
+stejného typu, ke kterým se přistupuje pomocí pořadí. Objekty třídy 
+\verb'Record' definují složený datový typ, kde se k jednotlivým datů přistupuje 
+přes pojmenované klíče, přičemž tato data mohou být různého typu. Objekty třídy 
+\verb'AbstractRecord' umožňují jednoduchou dědičnost a zejména polymorfismus. 
+Typ \verb'Record' může být definován jako potomek nějakého typu 
+\verb'AbstractRecord'. Polymorfismus dovoluje definovat pole 
+\verb'Array' sestávající z dat nějakého \verb'AbstractRecord' typu $X$.
+Na vstupu pak lze do pole ukládat data libovolných 
+\verb'Record' typu $Y$, pokud $Y$ je potomkem $X$. Vstup pro typy 
+\verb'AbstractRecord' musí obsahovat speciální klíč \verb'TYPE', který 
+specifikuje jméno \verb'Record' typu (potomka), který se na vstupu vyskytuje. 
+V programu je tak možno vytvořit instanci příslušné třídy.
+Takto je možno deklarovat velice obecnou hierarchickou strukturu vstupních dat 
+se zahrnutím dokumentace a implicitních hodnot.
+
+Byly implementovány třídy pro výstup deklarované hierarchie v několika 
+formátech. Zadáním vhodných argumentů programu Flow123d na příkazové řádce
+lze vypsat hierarchii vstupu v několika formátech:
+\begin{itemize}
+ \item Textový formát. (parametr \verb'--full_doc') Vypíše úplný popis 
+hierarchie v textovém formátu či
+ \item LaTeX formát. (parametr \verb'--latex_doc') Vygeneruje úplný popis 
+hierarchie v LaTeX formátu. Spolu se sadou speciálních maker je možné 
+vygenerování PDF s technickou dokumentací a její propojení s ručně psanou částí 
+pomocí hyperlinků. 
+ \item JSON strojově čitelný formát. (parametr \verb'--JSON_machine') Vygeneruje 
+úplný popis hierarchie ve formátu JSON, který je vhodný pro strojové 
+zpracování. Do budoucna umožní například tvorbu grafického nástroje pro 
+přípravu vstupních dat.
+\end{itemize}
+
+
+Dále byla implementována čtečka datového formátu JSON. Pro lepší srozumitelnost 
+vstupních souborů byla zahrnuta možnost vkládání komentářů (není součást 
+standardu JSON, ale součást jazyka JavaScript, jehož je JSON součástí). 
+Pro lepší čitelnost vstupních souborů dovoluje čtečka vynechání uvozovek u 
+jmen klíčů a použití rovnítka pro přiřazení hodnoty (místo dvojtečky).
+Čtečka provádí kontrolu vstupu oproti jeho deklaraci a jednotným způsobem hlásí 
+chyby na vstupu včetně jejich logické pozice ve vstupním souboru. Načtená data 
+jsou ukládána do jednoduché stromové struktury, odkud jsou přístupná 
+prostřednictvím přístupových tříd \verb'Record', \verb'AbstractRecord' a 
+\verb'Array' (ze jmenného prostoru \verb'Input'), které umožňují čtení pomocí 
+klíče (třída \verb'Record') respektive pomocí iterátoru (třída \verb'Array').
+
+Vstupní rozhraní plně nahradilo dřívější hlavní \verb'INI' soubor a umožnilo 
+lépe strukturovat a dále rozšiřovat strukturu vstupních dat. Pro snadnější 
+přechod na nový formát vstupních dat byl vytvořen jednoduchý konvertor 
+\verb'INI' souboru do formátu JSON s příslušnou novou strukturou.  
+
 \subsection{Zadávání časoprostorových fyzikálních polí}
+S využitím nového vstupního rozhraní byla vytvořena hierarchie tříd (Field) pro 
+jednotný vstup časoprostorových skalárních, vektorových či 
+tenzorových polí. Tento přístup nahradil všechny další vstupní soubory 
+s výjimkou souborů s výpočetní sítí. Další výhodou je možnost zadávat data 
+nezávisle na konkrétní síti, ale pouze v  návaznosti na její geometrii danou 
+soustavou regionů.
+
+Naprostou většinu parametrů rovnic lze chápat jako funkce času a polohy ve 
+výpočetní oblasti nebo její hranici (okrajové podmínky).  Třída 
+\verb'Field', respektive šablona parametrizovaná typem 
+závislé hodnoty (diskrétní, skalár, vektor, tenzor), reprezentuje 
+takovéto funkce. Třída zejména implementuje  metodu pro výpočet 
+závislé hodnoty pro daný čas a bod ve výpočetní oblasti.
+Z důvodů efektivní implementace se metodě předává jako parametr i 
+element, na kterém bod leží. Množina elementů tvořících jednu logickou 
+oblast (např. jeden materiál) se nazývá {\emph region}. Třída \verb'Field' 
+obsahuje tabulku, která každému regionu přiřazuje instanci třídy (respektive 
+šablony) \verb'FieldBase'. Potomci této třídy implementují vlastní výpočet 
+závislé hodnoty pro konkrétní region. Volbou potomka (pomocí klíče 
+\verb'TYPE') může uživatel zvolit algoritmus použitý pro výpočet závislé 
+hodnoty. V současné době jsou implementovány třídy:
+\begin{itemize}
+ \item {\tt FieldConstant} 
+ --- zadání konstantní hodnoty na regionu.
+ \item {\tt FieldFormula} 
+ --- zaání funkce pomocí vzorce obsahujícího proměnné 
+ $t$, $x$, $y$,$z$.
+ \item {\tt FieldPython} 
+ --- umožňuje výpočet hodnot pomocí funkce v jazyce Python.
+ \item {\tt FieldElementwise} 
+ --- diskrétní funkce po částech konstantní na elementech sítě. Hodnoty 
+ve formátu GMSH dané ve zvláštním souboru. Vyžaduje data zadaná na stejné síti 
+jako je síť výpočetní. 
+
+ \item {\tt FieldInterpolated}
+ --- diskrétní funkce po částech konstantní na elementech sítě. Hodnoty 
+jsou interpolovány ze sítě a dat ve formátu GMSH dané ve zvláštním souboru.
+\end{itemize}
+
+Koncept {\emph Fields} byl natolik úspěšný, že byl dále rozšířen i pro 
+předávání vypočtených fyzikálních polí do výstupního rozhraní a mezi 
+rovnicemi.
+
+{\bf Interpolace mezi sítěmi.}
+Aktuálně je implementována interpolace po částech konstantních dat z 3D sítě na 
+data konstantní na 2D a 1D elementech. Interpolovaná hodnota na elementu $X$ je 
+vypočtena jako vážený průměr hodnot na elementech mající s $X$ neprázdný 
+průnik. Váhy jsou dány velikostí průniku.
+Pro efektivní výpočet je třeba k danému 
+elementu $X$ cílové sítě najít seznam elementů zdrojové sítě, které mají s $X$ 
+neprázdný průnik a to maximálně se složitostí $O(log N)$ vzhledem k velikosti 
+zdrojové sítě. Toho je dosaženo vytvořením vyhledávacího stromu nad elementy 
+zdrojové sítě, konkrétně je použita metoda \uv{Bounding interval hierarchy}
+(BIH). 
+Vyhledávací strom BIH pro zadaný element vytvoří obalový box a vrátí seznam 
+elementů jejichž obalové boxy s ním mají neprázdný průnik. Pro každý takový 
+element podezřelý z průniku, je třeba nalézt skutečný průnik se vstupním 
+elementem. Toto je zatím implementováno jen pro dvojice 3D-2D a 3D-1D elementů. 
+Rozpracovaný je výpočet průniků pro další kombinace dimenzí a algoritmy 
+pro hledání všech průniků v lineárním čase.
+
 \subsection{Systém chybových hlášení}
+Pro snadné používání programu je důležité dostatečně podrobné 
+reportování chyb. V případě chyby by měl uživatel dostat relevantní 
+informace o příčinách jejího vzniku. 
+Až do verze 1.6.7 byly uživatelské i programové chyby vypisovány přímo v místě 
+detekce chyby, kde ovšem často nejsou k dispozici všechny potřebné informace. 
+Při vývoji vstupního rozhraní byl pro reportování chyb použit systém výjimek, 
+který umožňuje zachytit výjimku ve vyšší vrstvě a přidat do ní dodatečné 
+informace. Mechanismus výjimek jazyka C++ zároveň zajistí zavolání všech 
+destruktorů a kontrolované ukončení programu.
+Nový systém výjimek byl dále použit i v dalších částech 
+programu a byly do něj zapouzdřeny i původní funkce pro vypisování chybových 
+zpráv. 
+
 \subsection{Výstupní rozhraní}
+Před započetím projektu umožňoval Flow123d výstup pouze několika veličin do 
+formátu GMSH. Jedná se sice o otevřený datový formát s jednoduchou strukturou, 
+ale k vizualizaci a postprocesingu dat je možné použít pouze program GMSH, 
+který je však primárně určen k přípravě výpočetních sítí. V rámci projektu byla 
+přidána podpora pro výstup do formátu VTK, který je podporován většinou 
+vizualizačních programů. Dále bylo implementováno výstupní rozhraní, které 
+umožňuje výstup libovolného pole \verb'Field'. Uživatel tak může vybrat pro 
+výstup jak vstupní tak vypočtená pole, případně jejich částečně zpracované 
+varianty. Výstup je podporován jak do GMSH tak do VTK formátů a to pomocí třech 
+různých diskretizací: data konstantní na elementech, lineární funkce na 
+elementech dané hodnotami v uzlech sítě, lineární funkce na elementech 
+nespojité přes hranice elementů. První varianta je přirozená pro metodu 
+konečných objemů, druhé pro spojitou Galerkinovu  metodu prvního řádu a 
+třetí varianta je přirozená pro nespojitou Galerkinovu metodu prvního 
+řádu. Všechny varianty umožňují výstup skalárních, vektorových, i tenzorových 
+dat.
 
 \section{Kvalita kódu}
-\subsection{Správa verzí}
-\subsection{Systém testů}
-\subsection{Struktura programu}
 
+Vzhledem ke stále intenzivnějšímu vývoji a rozšiřování vývojového týmu jsme se 
+rozhodli přejít na nový systém pro správu verzí (git) a nový hosting centrálního 
+repozitáře (github). Tyto nástroje velmi zefektivňují týmovou spolupráci a 
+organizaci vývoje. Prezentace projektu na serveru github navíc přispívá k jeho 
+zviditelnění a umožňuje jednodušší spolupráci s externími vývojáři. Se změnou 
+verzovacího nástroje jsme museli změnit software pro průběžnou integraci (CI) a 
+testování. V současnosti používáme volně dostupný software Jenkins. Byl také 
+zprovozněn nový testovací a sestavovací server jak pro systém Linux tak pro 
+Windows. V současnosti tak máme k dispozici každodenní instalační balíčky pro 
+Linux i Windows sestavené z aktuálního stavu vývojové větve.  Tyto poměrně 
+zásadní změny si vyžádaly poměrně dost času na zvládnutí nových nástrojů a 
+zaškolení týmu, výsledkem však je  infrastruktura, která nám v následujících 
+letech umožní efektivně produkovat výkonný a spolehlivý software.
 
-
-\section{Vývoj za roky 2011--2014}
 
 \begin{thebibliography}{99}
 
