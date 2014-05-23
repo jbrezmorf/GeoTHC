@@ -26,24 +26,25 @@ $h_d$ jsou provázány vztahem $H_d = h_d + z$, za předpokladu, že gravitačn�
 Kombinací uvedených vztahů dostáváme Darcyův zákon
 \begin{equation}
     \label{eq:darcy_flux}
-    \vc q = -\delta k\tn A \grad (h+z)  \qquad\text{on }\Omega_d,\ \text{for $d=1,2,3$}.
+    \vc q = -\delta k\tn A \grad (h+z)  \qquad\text{v }\Omega_d,\ \text{pro $d=1,2,3$}.
 \end{equation}
 
 S využitím rovnice kontinuity pro nasycené prostředí a dimenzionální redukce (detaily jsou popsány v sekci \ref{sc:ad_on_fractures}) dostaneme rovnici
 \begin{equation}
     \label{eq:continuity}
-    \prtl_t (\delta S\, h) + \div \vc q = F \qquad \text{on }\Omega_d,\ \text{for $d=1,2,3$},
+    \prtl_t (\delta S\, h) + \div \vc q = F \qquad \text{v }\Omega_d,\ \text{pro $d=1,2,3$},
 \end{equation}
 kde \hyperA{DarcyFlowMH-Data::storativity}{$S_d$} \units{}{-1}{} je storativita a $F_d$ \units{}{3-d}{-1} je zdrojový člen. V našem případě jsou principiálními neznámými systému
 (\ref{eq:darcy_flux}, \ref{eq:continuity}) tlaková výška $h_d$ a tok $\vc q_d$.
 
 
-Storativita $S_d>0$ může být vyjádřena jako
-\begin{equation}
-  S_d = \gamma_w(\beta_r + \nu \beta_w),
-\end{equation}
-kde $\gamma_w$ \units{1}{-2}{-2} je specifická hmotnost vody, $\nu$ je porozita $[-]$, $\beta_r$ je kompresibilita porézního materiálu (horniny)
-a $\beta_w$ je kompresibilita vody \units{-1}{1}{-2}. Pro ustálené problémy definujeme $S_d=0$ pro všechny dimenze $d=1,2,3$.
+% Storativita $S_d>0$ může být vyjádřena jako
+% \begin{equation}
+%   S_d = \gamma_w(\beta_r + \th \beta_w),
+% \end{equation}
+% kde $\gamma_w$ \units{1}{-2}{-2} je specifická hmotnost vody, $\th$ je porozita $[-]$, $\beta_r$ je kompresibilita porézního materiálu (horniny)
+% a $\beta_w$ je kompresibilita vody \units{-1}{1}{-2}.
+Pro ustálené problémy definujeme $S_d=0$ pro všechny dimenze $d=1,2,3$.
 Zdrojový člen $F_d$ na pravé straně \eqref{eq:continuity} se skládá z objemové hustoty předepsaných zdrojů
 \hyperA{DarcyFlowMH-Data::water-source-density}{$f_d$} \units{}{}{-1} a z toku z vyšší dimenze. 
 Přesný vztah uvedeme zvlášť pro každou dimenzi:
@@ -71,7 +72,7 @@ objemový zdroj na $\Omega_2$.  Proto $F_2$ \units{}{1}{-1} na pravé straně \e
    F_2 = \delta_2 f_2 + (q_{32}^{+} + q_{32}^{-}).
 \end{equation}
 
-Komunikace mezi $\Omega_2$  a  $\Omega_1$ je podobné.  Nicméně ve 3D prostoru
+Komunikace mezi $\Omega_2$  a  $\Omega_1$ je podobná; nicméně ve 3D prostoru
 může 1D kanál propojovat více 2D puklin $1,\dots, n$. Máme tedy $n$
 nezávislých výtoků z $\Omega_2$:
 \begin{equation*}
@@ -91,7 +92,7 @@ Součet toků představuje část $F_1$ \units{}{2}{-1}:
 Poznamenejme, že přímá komunikace mezi 3D a 1D v modelu není uvažována.
 Koeficienty přestupu
 \hyperA{DarcyFlowMH-Data::sigma}{$\sigma_{32}$} \units{}{}{} a
-\hyperA{DarcyFlowMH-Data::sigma}{$\sigma_{21}$} \units{}{}{} jsou nezávislé škálovací parametry reprezentující poměr příšné a podélné hydraulické vodivosti v puklině.
+\hyperA{DarcyFlowMH-Data::sigma}{$\sigma_{21}$} \units{}{}{} jsou nezávislé škálovací parametry reprezentující poměr příčné a podélné hydraulické vodivosti v puklině.
 
 Pro jednoznačnou řešitelnost úlohy je třeba předepsat okrajové podmínky. V současnosti jsou podporovány tři základní typy. 
 Předpokládejme disjunktní dělení hranice

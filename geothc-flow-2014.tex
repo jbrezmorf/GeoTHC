@@ -90,10 +90,10 @@ top=1.49in, bottom=1.49in]{geometry}
 \pagebreak
 \section{Vývoj numerického software Flow123d}
 Program Flow123d je softwarový nástroj pro simulaci termálních, hydrologických 
-a chemických (THC) procesů v rozpukaném porézním prostředí. Podporovné 
+a chemických (THC) procesů v rozpukaném porézním prostředí. Podporované 
 fyzikální modely zahrnují: Darcyovské proudění, transport látek, jejich reakce, 
 fyzikální a chemické interakce s horninou a vedení tepla. Program je schopen 
-popsat explicitně procesy v 3D médiu, 2D puklinách, a 1D preferenčních cestách a 
+popsat explicitně procesy v 3D médiu, 2D puklinách a 1D preferenčních cestách a 
 komunikaci mezi těmito doménami různých dimenzí. Tento přístup umožňuje výpočty 
 v regionálním měřítku se zahrnutím vlivu jemných struktur s výrazně odlišnými 
 materiálovámi parametry, např. geologických zlomů. Zejména je vhodný pro  
@@ -105,8 +105,8 @@ strukturou.
 \subsubsection{Počáteční stav}
 Prvotní verze programu vznikla v rámci dizertační práce 
 Otto Severýna okolo roku 2004. Program umožňoval výpočet stacionárního 
-Darcyovského proudění pomocí metody smíšených-hybridních konečných prvků 
-nultého řádu. Originalita nespočívala v komplexnosti řešené rovnice (jedná o 
+Darcyovského proudění pomocí metody smíšených-hybridních ko\-neč\-ných prvků 
+nultého řádu. Originalita nespočívala v komplexnosti řešené rovnice (jedná se o 
 lineární eliptickou rovnici), ale v komplexnosti výpočetní oblasti. Program 
 umožňuje modelovat 3D kontinuum obsahující relativně tenké 2D pukliny a 1D 
 kanály pomocí 2D a 1D konečných prvků a řeší tak sdruženou úlohu jedné rovnice 
@@ -117,10 +117,10 @@ Ke konci roku 2010 umožňoval software výpočet stacionárního proudění a
 navazující výpočet transportu. 
 
 Lineární systém algebraických rovnic vyplývající 
-ze smíšené-hybridní diskretizace problému proudění byl řešen paralelně pomocí 
+ze smíšené-hybridní diskretizace problému prou\-dě\-ní byl řešen paralelně pomocí 
 knihovny PETSc. Byla implementována paralelní redukce soustavy pomocí 
 Schurových doplňků a redukovaný systém s pozitivně definitní maticí byl řešen 
-metodou sdružených gradientů s možností široké škály předpodmiňovačů dostupných 
+metodou sdru\-že\-ných gradientů s možností široké škály předpodmiňovačů dostupných 
 přes rozhraní knihovny PETSc. Transportní rovnice (pouze konvekce bez difúze) 
 zahrnovala koncept duální porozity (mobilní a immobilní póry) a sorpci látky 
 do horniny. Bylo možno řešit transport více látek najednou. Transportní rovnice 
@@ -129,19 +129,19 @@ Výpočet jednoho časového kroku byl realizován paralelně pomocí maticovéh
 násobení knihovny PETSc. 
 
 Vstupní data programu byla zadávána v několika 
-souborech s rozdílným formátem. Pro jejich přípravu bylo třeba použít 
+souborech s rozdílným formátem. Pro jejich pří\-pra\-vu bylo třeba použít 
 další podpůrné softwarové nástroje což značně komplikovalo jakoukoliv 
 jejich změnu. Výstup výsledných skalárních a vektorových 
 polí byl realizován pouze do formátu programu GMSH, který není podporován jiným 
 vizualizačním software. K dispozici byla elementární dokumentace vstupních 
-souborů. Software měl již vlastni SVN repozitář pro správu verzí a webové 
+souborů. Software měl již vlastní SVN repozitář pro správu verzí a webové 
 stránky projektu. Bylo vytvořeno několik testů pro ověření základní 
 funkcionality. 
 
 
 \subsubsection{2011 -- verze 1.6.5}
 Byly rozpracovány třídy pro řešení rovnice konvekce-difúze pomocí nespojité 
-Galerkinovy metody s implicitní časovou diskretizací. Byl implementován model 
+Galerkinovy metody s~implicitní časovou diskretizací. Byl implementován model 
 pro rozpady a jednosložkové reakce. Byla vytvořena třída pro obecné sekvenciální 
 propojení rovnic (proudění ustálené i neustálené a transportu). Do modelu 
 transportu byly implementovány dva typy objemových zdrojů koncentrací 
@@ -171,18 +171,18 @@ sada je automaticky spouštěna pro každou změnu zdrojových kódů a výsledk
 publikovány na webu projektu. 
 
 \subsubsection{2012 -- verze 1.7.0}
-Byla dokončena implementace modelu pro advekci a difúzi s zahrnutím 
+Byla dokončena implementace modelu pro advekci a difúzi se zahrnutím 
 hydrodynamické disperze. Model používá nespojitou Galerkinovu metodu pro 
 diskretizaci v prostoru a implicitní Eulerovu metodu pro časovou integraci.  
 Pole koncentrací je diskretizováno pomocí po částech lineárních funkcí na 
 jednotlivých elementech (čtyřstěnech, trojúhelnících, či úsečkách), spojitost 
 řešení je vynucena penalizačním členem ve slabé formulaci řešené rovnice. Model 
-byl odladěn na několika testovacích úlohách, je podporováno parallelní 
-sestavování matic i a parallelní řešení soustav na jednotlivých časových 
+byl odladěn na několika testovacích úlohách, je podporováno paralelní 
+sestavování matic a paralelní řešení soustav na jednotlivých časových 
 úrovních.
 Bylo optimalizováno a zjednodušeno uložení výpočetní sítě a nástroj ngh pro 
 hledání sousedností mezi dimenzemi byl začleněn přímo do Flow123d. Vyhledávání 
-kompatibliních sousedností probíhá přímo na načtené výpočetní síti což je 
+kompatibilních sousedností probíhá přímo na načtené výpočetní síti což je 
 rychlejší a zmenšuje paměťové nároky. 
 Dále bylo dokončeno a aplikováno nové vstupní rozhraní. Veškeré vstupy programu 
 jsou nyní čteny přes toto rozhraní, které umožňuje automatické vytvoření 
@@ -190,7 +190,7 @@ referenční dokumentace hlavního vstupního souboru ve formátu JSON.
 Byly navrhnuty a implementovány třídy pro zadávání časo-prostorových skalárních, 
 vektorových či tenzorových polí. Většinu parametrů v modelech lze nyní zadávat 
 jednotným způsobem. Pro parametr zadávaný pomocí „Field“ rozhraní, lze pro každý 
-region sítě předepsat prostorovou závislost pomocí jednoho ze šesti 
+region sítě předepsat prostorovou závislost pomocí jedné ze šesti 
 elementárních funkcí. Elementární funkce FieldConstant poskytuje prostorově 
 konstantní hodnoty, FieldFormula umožňuje zadat funkci pomocí vzorce 
 obsahujícího parametry t,x,y,z, který je přeložen až při běhu programu, 
@@ -207,7 +207,7 @@ průniku s nalezenými 3D elementy.
  Během roku 2012 bylo začleněno přes 500 sad změn. 
 \subsubsection{2013 -- verze 1.8.0}
 Verze 1.7.0 z předchozího roku přinesla dvě velké změny: nový model 
-advekce-difúze a nové vtupní rozhraní. Obě přinesly rozšíření možností 
+advekce-difúze a nové vstupní rozhraní. Obě přinesly rozšíření možností 
 simulátoru, ale zároveň mohlo dojít ke zhoršení výkonu. V roce 2013 bylo 
 provedeno podrobné porovnání výsledků a výkonu oproti verzi 1.6.7 na reálných 
 úlohách, byly opraveny drobné chyby a vyřešeny podstatné výkonnostní problémy.  
@@ -242,24 +242,24 @@ Drobné opravy a vylepšení, verze 1.8.1, testovací ulohy.
 
 \subsection{"hrudková" smíšená-hybridní metoda}
 \subsection{lineární řešič BDDCML}
-Podpora paralelního řešiče BDDCML
+% Podpora paralelního řešiče BDDCML
 Ve spolupráci s Jakubem Šístkem byly dokončeny práce na využití jeho paralelního 
 řešiče implementujícího víceúrovňovou metodu BDDC. Práce zahrnovaly jak úpravy 
 na straně Flow123d tak na straně knihovny. Aplikace metody BDDC na úlohy 
 proudění s kombinacemi prvků různé dimenze je originální. Náročné bylo zejména 
 zvládnutí velkých rozdílů ve vodivostech na rozhraních sub-struktur jednotlivých 
 procesorů. Velké rozdíly se mohou objevit, pokud je rozhraní mezi 2D a 3D 
-elementem. Pro zvládnutí této heterogenity ve vodivosti bylo navrženy a 
+elementem. Pro zvládnutí této heterogenity ve vodivosti byly navrženy a 
 otestovány tři metody vážení tlaků na rozhraních. Uvažujme bod X na rozhraní 
 sub-struktur hodnota tlaku v tomto bodě je rovna váženému průměru tlaků na 
-jednotlivých sub-strukturách,. Standardní volba vah není vhodná pro heterogenní 
+jednotlivých sub-strukturách. Standardní volba vah není vhodná pro heterogenní 
 problémy. Pokud jsou materiálové parametry (v našem případě vodivost) výrazně 
 rozdílné na jednotlových sub-strukturách, používá se škálování: . To ovšem 
 předpokládá konstantní materiálové charakteristiky na jednotlivých 
-sub-strukturách v našem případě, kdeje dimenze a je tenzor hydraulické vodivosti 
+sub-strukturách v našem případě, kde je dimenze a je tenzor hydraulické vodivosti 
 na elementu sub-struktury přiléhajícímu k X. Kombinace 2D a 3D elementů však 
 může vést na výrazné oscilace podél rozhraní, pokud se hodnoty výrazně mění 
-podél rozhraní. Proto jsme navrhli upravené škálování , kde používáme přímo 
+podél rozhraní. Proto jsme navrhli upravené škálování, kde používáme přímo 
 hodnoty z asemblované matice, je diagonální hodnota z matice komunikace mezi 
 dimenzemi. Ta je nenulová pouze v případě, že rozhraní odděluje elementy různé 
 dimenze. Hodnota je diagonální hodnota z lokální matice elementu přiléhajícímu k 
@@ -340,6 +340,12 @@ A discontinuous {G}alerkin method with weighted averages for advection--diffusio
 V. Martin, J. Jaffr{\'e}, J.E. Roberts.
 Modeling Fractures and Barriers as Interfaces for Flow in Porous Media,
 \emph{{SIAM} Journal on Scientific Computing}, 26(5):1667--1691, 2005.
+
+
+\bibitem{millington_quirk}
+R.J. Millington, J.P. Quirk.
+Permeability of porous solids, 
+\emph{Transactions of the Faraday Society}, 57:1200--1207, 1961.
 
 
 \bibitem{SistekBDDC}
