@@ -16,7 +16,7 @@ u_d(0,\cdot) &= u^0 &&\mbox{ v }\Omega_d,\\
 \end{align}
 Komunikační člen $q(u_{d+1},u_d)$ má tvar
 \begin{equation}
-q(u_{d+1},u_d) = \begin{cases}\alpha u_{d+1} + \beta u_d & \mbox{ v }\Gamma^C_{d+1},~d=1,2,\\ 0 & \mbox{ mimo }\Gamma^C_{d+1}\mbox{ a pro }d=3.\end{cases}
+q(u_{d+1},u_d) = \begin{cases}\alpha u_{d+1} + \beta u_d & \mbox{ v }\Gamma^C_{d+1},~d=1,2,\\ 0 & \mbox{ mimo }\Gamma^C_{d+1}\mbox{ a pro }d=0,3.\end{cases}
 \end{equation}
 \end{subequations}
 Systém \eqref{eq:abstr_system} je diskretizován v prostoru pomocí nespojité Galerkinovy metody s váženými průměry, která byla odvozena pro případ jedné oblasti v \cite{ern_stephansen_zunino} (pro a posteriorní odhady viz \cite{ern2010guaranteed}).
@@ -39,15 +39,21 @@ Rozdíl hodnot funkce $f$ mezi sousedícími elementy definujeme jako $\jmp{f}=f
 Váha $\omega$ je volena specifickým způsobem (viz \cite{ern_stephansen_zunino}) s ohledem na možnou nehomogenitu tenzoru $\tn A$.
 
 % Let us fix one substance and the space dimension $d$.
-V každém časovém kroce $t_k=k\tau$ hledáme diskrétní řešení $u_d^{h,k}\in V_d^h$, kde
+V každém časovém kroce $t_k=k\tau$ hledáme diskrétní řešení $u^{h,k}=(u_1^{h,k},u_2^{h,k},u_3^{h,k})\in V^h=\prod_{d=1}^3 V_d^h$, kde
 $$ V_d^h = \{v:\overline{\Omega^d}\to\R\where v_{|T}\in P_1(T)~\forall T\in\Th^d\} $$
 je prostor po částech afinních funkcí na elementech $\Th^d$, obecně nespojitých na rozhraních elementů.
 Počáteční podmínka pro $u_d^{h,0}$ je nastavena jako $L^2$-projekce funkce $u^0$ na $V_d^h$.
-Pro $k=1,2,\ldots$ je $u_d^{h,k}$ dáno jako řešení úlohy
+Pro $k=1,2,\ldots$ je $u^{h,k}$ dáno jako řešení úlohy
 \begin{equation*}
-\frac1\tau\sc{u_d^{h,k}-u^{h,k-1}_d}{v}_{\Omega^d} + a^{h,k}_d(u^{h,k}_d,v) = b^{h,k}_d(v) \quad \forall v\in V^h_d.
+\frac1\tau\sc{u^{h,k}-u^{h,k-1}}{v}_{V^h} + a^{h,k}(u^{h,k},v) = b^{h,k}(v) \quad \forall v\in V^h.
 \end{equation*}
-Zde $\sc{f}{g}_{\Omega^d}=\int_{\Omega^d} f g$, a formy $a^{h,k}_d$, $b^{h,k}_d$ jsou definovány následovně:
+Zde $\sc{f}{g}_{V^h}=\sum_{d=1}^d\sc{f}{g}_{\Omega^d}$, $\sc{f}{g}_{\Omega^d}=\int_{\Omega^d} f g$, a formy $a^{h,k}$, $b^{h,k}$ jsou definovány následovně:
+% \begin{multline*}
+\[
+a^{h,k}((u_1,u_2,u_3),(v_1,v_2,v_3)) = \sum_{d=1}^3\bigg( a^{h,k}_d(u_d,v_d) - \sc{q(u_{d+1},u_d)}{v_d}_{\Omega^d}
+- \sum_{E\in\Ehcom^d(t_k)}\sc{q(u_d,u_{d-1})}{v_d}_E \bigg),
+\]
+% \end{multline*}
 \begin{align*}
 a^{h,k}_d(u,v) = &\sc{\tn A\nabla u}{\nabla v}_{\Omega^d}
 - \sc{\bb u}{\nabla v}_{\Omega^d}\\
@@ -60,9 +66,8 @@ a^{h,k}_d(u,v) = &\sc{\tn A\nabla u}{\nabla v}_{\Omega^d}
 % \end{multline*}
 % 
 % \begin{equation*}
-b^{h,k}_d(v) = &\sc{f+q}{v}_{\Omega^d} + \sum_{E\in\Ehdir^d(t_k)}\bigg(\gamma_E\sc{u^D}{v}_E - \Theta\sc{u^D}{\tn A\nabla v\cdot\nn}_E\bigg)\\
-&+ \sum_{E\in\Ehneu^d(t_k)}\sc{f^N+\sigma^R u^D}{v}_E
-+ \sum_{E\in\Ehcom^d(t_k)}\sc{q}{v}_E.
+b^{h,k}_d(v) = &\sc{f}{v}_{\Omega^d} + \sum_{E\in\Ehdir^d(t_k)}\bigg(\gamma_E\sc{u^D}{v}_E - \Theta\sc{u^D}{\tn A\nabla v\cdot\nn}_E\bigg)
++ \sum_{E\in\Ehneu^d(t_k)}\sc{f^N+\sigma^R u^D}{v}_E.
 \end{align*}
 Dirichletova podmínka je zde vynucena penalizací, přičemž parametr penalizace $\gamma_E>0$ je volitelný; jeho hodnota ovlivňuje míru nespojitosti řešení. Pro $\gamma_E\to+\infty$ tak (alespoň formálně) asymptoticky dostáváme metodu konečných prvků.
 Konstanta $\Theta$ může nabývat hodnot $-1$, $0$ nebo $1$, což odpovídá nesymetrické, neúplné a symetrické variantě nespojité Galerkinovy metody.
