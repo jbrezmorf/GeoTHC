@@ -3,7 +3,7 @@
 Uvažujeme Darcyho model pro rychlost proudění v porézním a rozpukaném prostředí:
 \begin{equation}
     \label{eq:darcy}
-    \vc w = -\tn K \grad H \quad\text{on }\Omega_d,\ \text{for $d=1,2,3$}.
+    \vc w = -\tn K \grad H \quad\text{v }\Omega_d,\ \text{pro $d=1,2,3$}.
 \end{equation}
 % We drop the dimension index of quantities in equations if it is the same as the dimension of the set where the equation holds.
 V \eqref{eq:darcy}, $\vc w_d$ \units{}{1}{-1} je makroskopická rychlost,
@@ -21,7 +21,7 @@ Tenzor vodivosti je dán rovnicí \penalty-500
 $\tn K_d = k_d \tn A_d$, kde
 \hyperA{DarcyFlowMH-Data::conductivity}{$k_d>0$} je hydraulická vodivost \units{}{1}{-1} a
 \hyperA{DarcyFlowMH-Data::anisotropy}{$\tn A_d$} je
-$3\times 3$ bezrozměrný tenzor anizotropie, u nějž předpokládáme symetrii a pozitivní definitnost. Piezometrická výška $H_d$ tlaková výška
+$3\times 3$ bezrozměrný tenzor anizotropie, u nějž předpokládáme symetrii a pozitivní definitnost. Piezometrická výška $H_d$ a tlaková výška
 $h_d$ jsou provázány vztahem $H_d = h_d + z$, za předpokladu, že gravitační síla působí ve směru $(0,0,-1)$. 
 Kombinací uvedených vztahů dostáváme Darcyův zákon
 \begin{equation}
@@ -97,13 +97,13 @@ Koeficienty přestupu
 Pro jednoznačnou řešitelnost úlohy je třeba předepsat okrajové podmínky. V současnosti jsou podporovány tři základní typy. 
 Předpokládejme disjunktní dělení hranice
 \[
-    \prtl\Omega_d = \Gamma_d^D \cap \Gamma_d^N \cap \Gamma_d^R
+    \prtl\Omega_d = \Gamma_d^{D,f} \cap \Gamma_d^{N,f} \cap \Gamma_d^{R,f}
 \]
 na segmenty, kde je uvažována Dirichletova, Neumannova, resp. Robinova podmínka. Předepisujeme tedy
 \begin{align}
-    h_d &= h_d^D        &&\text{ na }\Gamma_d^D,\\
-    \vc q_d \cdot \vc n &= q_d^N         &&\text{ na }\Gamma_d^N,\\
-    \vc q_d \cdot \vc n &= \sigma_d^R ( h_d - h_d^R)     &&\text{ na }\Gamma_d^R,
+    h_d &= h_d^D        &&\text{ na }\Gamma_d^{D,f},\\
+    \vc q_d \cdot \vc n &= q_d^N         &&\text{ na }\Gamma_d^{N,f},\\
+    \vc q_d \cdot \vc n &= \sigma_d^R ( h_d - h_d^R)     &&\text{ na }\Gamma_d^{R,f},
 \end{align}
 kde
 \hyperA{DarcyFlowMH-Data::bc-pressure}{$h_d^D$, $h_d^R$} 

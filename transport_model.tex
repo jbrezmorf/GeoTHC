@@ -41,19 +41,19 @@ Zde $f_S^i$ \units{1}{-3}{-1} je hustota objemových zdrojů, $c_S^i$ \units{1}{
 \paragraph{Počáteční a okrajové podmínky.}
 Pro čas $t=0$ je předepsána počáteční podmínka
 $$ c^i(0,\vc x) = c^i_0(\vc x). $$
-Hranice $\partial\Omega_d$ je rozdělena na části $\Gamma_I\cup\Gamma_D\cup\Gamma_N\cup\Gamma_R$, které mohou být časově závislé.
-První segment $\Gamma_I$ je dále rozdělen na část vstupní a výstupní:
+Hranice $\partial\Omega_d$ je rozdělena na části $\Gamma^{I,c}_d\cup\Gamma^{D,c}_d\cup\Gamma^{N,c}_d\cup\Gamma_d^{R,c}$, které mohou být časově závislé.
+První segment $\Gamma^{I,c}_d$ je dále rozdělen na část vstupní a výstupní:
 \begin{align*}
-\Gamma_I^+(t) &= \{\vc x\in \partial\Omega_d\where \vc q(t,\vc x)\cdot\vc n(\vc x)<0\},\\
-\Gamma_I^-(t) &= \{\vc x\in \partial\Omega_d\where \vc q(t,\vc x)\cdot\vc n(\vc x)\ge 0\},
+\Gamma^{I,c+}_d(t) &= \{\vc x\in \partial\Omega_d\where \vc q(t,\vc x)\cdot\vc n(\vc x)<0\},\\
+\Gamma^{I,c-}_d(t) &= \{\vc x\in \partial\Omega_d\where \vc q(t,\vc x)\cdot\vc n(\vc x)\ge 0\},
 \end{align*}
 kde $\vc n$ značí vektor vnější jednotkové normály k $\partial\Omega_d$.
 Jsou předepsány následující okrajové podmínky:
 \begin{align*}
-c^i &= c^i_D &&\mbox{ na }\Gamma_I^+\cup\Gamma_D, & \mbox{(Dirichlet)}\\
--\th\delta\D^i\nabla c^i\cdot\vc n &= 0 &&\mbox{ na }\Gamma_I^-, & \mbox{(homogenní Neumann)}\\
--\th\delta\D^i\nabla c^i\cdot\vc n &= f^i_N &&\mbox{ na }\Gamma_N, & \mbox{(nehomogenní Neumann)}\\
--\th\delta\D^i\nabla c^i\cdot\vc n &= \sigma^i_R(c^i-c^i_D) &&\mbox{ na }\Gamma_R. &\mbox{(Robin/Newton)}
+c^i &= c^i_D &&\mbox{ na }\Gamma^{I,c+}_d\cup\Gamma_d^{D,c}, & \mbox{(Dirichlet)}\\
+-\th\delta\D^i\nabla c^i\cdot\vc n &= 0 &&\mbox{ na }\Gamma_d^{I,c-}, & \mbox{(homogenní Neumann)}\\
+-\th\delta\D^i\nabla c^i\cdot\vc n &= f^i_N &&\mbox{ na }\Gamma_d^{N,c}, & \mbox{(nehomogenní Neumann)}\\
+-\th\delta\D^i\nabla c^i\cdot\vc n &= \sigma^i_R(c^i-c^i_D) &&\mbox{ na }\Gamma_d^{R,c}. &\mbox{(Robin/Newton)}
 \end{align*}
 
 

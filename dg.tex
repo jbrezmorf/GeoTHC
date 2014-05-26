@@ -40,8 +40,8 @@ Váha $\omega$ je volena specifickým způsobem (viz \cite{ern_stephansen_zunino
 
 % Let us fix one substance and the space dimension $d$.
 V každém časovém kroce $t_k=k\tau$ hledáme diskrétní řešení $u^{h,k}=(u_1^{h,k},u_2^{h,k},u_3^{h,k})\in V^h=\prod_{d=1}^3 V_d^h$, kde
-$$ V_d^h = \{v:\overline{\Omega^d}\to\R\where v_{|T}\in P_1(T)~\forall T\in\Th^d\} $$
-je prostor po částech afinních funkcí na elementech $\Th^d$, obecně nespojitých na rozhraních elementů.
+$$ V_d^h = \{v:\overline{\Omega^d}\to\R\where v_{|T}\in P_p(T)~\forall T\in\Th^d\} $$
+je prostor po částech polynomiálních funkcí stupně nejvýše $p$ na elementech $\Th^d$, obecně nespojitých na rozhraních elementů.
 Počáteční podmínka pro $u_d^{h,0}$ je nastavena jako $L^2$-projekce funkce $u^0$ na $V_d^h$.
 Pro $k=1,2,\ldots$ je $u^{h,k}$ dáno jako řešení úlohy
 \begin{equation*}
@@ -54,6 +54,7 @@ a^{h,k}((u_1,u_2,u_3),(v_1,v_2,v_3)) = \sum_{d=1}^3\bigg( a^{h,k}_d(u_d,v_d) - \
 - \sum_{E\in\Ehcom^d(t_k)}\sc{q(u_d,u_{d-1})}{v_d}_E \bigg),
 \]
 % \end{multline*}
+\[ b^{h,k}((v_1,v_2,v_3)) = \sum_{d=1}^3 b^{h,k}_d(v_d), \mbox{\hspace{11.7cm}} \]
 \begin{align*}
 a^{h,k}_d(u,v) = &\sc{\tn A\nabla u}{\nabla v}_{\Omega^d}
 - \sc{\bb u}{\nabla v}_{\Omega^d}\\
@@ -75,8 +76,8 @@ Konstanta $\Theta$ může nabývat hodnot $-1$, $0$ nebo $1$, což odpovídá ne
 % \paragraph{Communication between regions of the same dimension.}
 V případě nižších dimenzí ($\Omega^1$, $\Omega^2$) je možné uvažovat komplexnější topologii, kdy jedna stěna je sdílena více než 2 elementy.
 Pro tuto situaci je uvedená metoda zobecněna za předpokladu tzv. ideálního mísení.
-Nechť stěna $E$ je sdílena elementy $T_1^-,\ldots,T_{n_i}^-,T_1^+,\ldots,T_{n_o}^+$, kde $T_i^-$ značí vtokové elementy ($\bb\cdot\nn\ge0$) a $T_i^+$ výtokové elementy ($\bb\cdot\nn<0$).
-Označme $q_i:=(\bb\cdot\nn)_{|T_i}$ výtok z $T_i$ a definujme $I^-:=\{i\where q_i\le 0\}$ a $I^+:=\{i\where q_i>0\}$ množiny indexů všech výtokových, resp. vtokových elementů.
+Nechť stěna $E$ je sdílena elementy $T_1,\ldots,T_n$.
+Označme $q_i:=(\bb\cdot\nn)_{|T_i}$ výtok z $T_i$, $I=1,\ldots,n$ a definujme $I^-:=\{i\where q_i\le 0\}$ a $I^+:=\{i\where q_i>0\}$ množiny indexů všech výtokových, resp. vtokových elementů.
 
 Pro každou dvojici $(i,j)\in I^+\times I^-$ pak definujeme tok z $T_i$ do $T_j$ jako
 $$ q_{i\to j} := \frac{q_i q_j}{\sum_{k\in I^-}{q_k}}. $$
